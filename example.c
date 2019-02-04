@@ -17,6 +17,10 @@ int main( int argc, char *argv[] )
 	i = PAPI_start_counters( PAPI_events, 3 );
 
 	// your code here 
+	int i, sum;
+	i = 10;
+
+	sum = i + 100;
 
 	PAPI_read_counters( counters, 3 );
 
