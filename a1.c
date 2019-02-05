@@ -62,7 +62,7 @@ int main() {
 
 	PAPI_read_counters(counters, 2);
 
-	printf("Total cycles: %f\nTotal instructions: %f\n", counters[0], counters[1]);
+	printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
 
 	// !!! STOP COUNTERS !!!
 
@@ -77,7 +77,7 @@ int main() {
 		printf("\n");
 	}*/
 
-	printf("Number of HW counters: %d\n", PAPI_num_counters());
+	//printf("Number of HW counters: %d\n", PAPI_num_counters());
 
 	return 0;
 }
