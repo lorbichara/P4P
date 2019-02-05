@@ -7,13 +7,17 @@ int main() {
 	printf("Matrix dimension? ");
 	scanf("%d", &d);
 
-	double matA[2][2]
+	double matA[d][d];
+	double matB[d][d];
+
 	// initialize matrix A with random doubles
 	for(int i = 0; i < d; i++)
 	{
 		for(int j = 0; j < d; j++)
 		{
-			matA[i][j] = (double)rand()/RAND_MAX*2.0-1.0;
+			double range = (100-1);
+			double div = RAND_MAX / range;
+			matA[i][j] = 1 + (rand() / div);
 		}
 	}
 
@@ -22,8 +26,30 @@ int main() {
 	{
 		for(int j = 0; j < d; j++)
 		{
-			matB[i][j] = (double)rand()/RAND_MAX*2.0-1.0;
+			double range = (100-1);
+			double div = RAND_MAX / range;
+			matB[i][j] = 1 + (rand() / div);
 		}
+	}
+
+	for(int i = 0; i < d; i++)
+	{
+		for(int j = 0; j < d; j++)
+		{
+			printf("%lf \t", matA[i][j]);
+		}
+
+		printf("\n");
+	}
+
+	for(int i = 0; i < d; i++)
+	{
+		for(int j = 0; j < d; j++)
+		{
+			printf("%lf \t", matB[i][j]);
+		}
+
+		printf("\n");
 	}
 
 	double result[d][d]; // matrix that will store the result of the mult
@@ -68,7 +94,7 @@ int main() {
 		printf("\n");
 	}
 
-	//printf("Number of HW counters: %d\n", PAPI_num_counters());
+	printf("Number of HW counters: %d\n", PAPI_num_counters());
 
 	return 0;
 }
