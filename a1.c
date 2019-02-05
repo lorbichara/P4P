@@ -32,30 +32,13 @@ int main() {
 		}
 	}
 
-	for(int i = 0; i < d; i++)
-	{
-		for(int j = 0; j < d; j++)
-		{
-			printf("%lf \t", matA[i][j]);
-		}
-
-		printf("\n");
-	}
-
-	for(int i = 0; i < d; i++)
-	{
-		for(int j = 0; j < d; j++)
-		{
-			printf("%lf \t", matB[i][j]);
-		}
-
-		printf("\n");
-	}
-
 	double result[d][d]; // matrix that will store the result of the mult
 	
 	// !!! INITIALIZE COUNTERS !!!
 	// Total Cycles
+	
+	long long counters[2];
+
 	int PAPI_events[] = {
 		PAPI_TOT_CYC,
 		PAPI_TOT_INS
@@ -84,7 +67,7 @@ int main() {
 	// !!! STOP COUNTERS !!!
 
 	// print result matrix
-	for(int i = 0; i < d; i++)
+	/*for(int i = 0; i < d; i++)
 	{
 		for(int j = 0; j < d; j++)
 		{
@@ -92,7 +75,7 @@ int main() {
 		}
 
 		printf("\n");
-	}
+	}*/
 
 	printf("Number of HW counters: %d\n", PAPI_num_counters());
 
