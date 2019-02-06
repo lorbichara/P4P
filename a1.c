@@ -47,15 +47,17 @@ int main() {
 	}
 
 	// !!! INITIALIZE COUNTERS !!!	
-	long long counters[2];
+	long long counters[4];
 
 	int PAPI_events[] = {
-		PAPI_TOT_CYC,
- 		PAPI_TOT_INS
+		PAPI_L1_DCM,
+		PAPI_L1_DCA,
+		PAPI_L2_DCM,
+		PAPI_L2_DCA,
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int i = PAPI_start_counters(PAPI_events, 2);
+	int i = PAPI_start_counters(PAPI_events, 4);
 
 	// matrix multiplication
 	for(int k = 0; k < d; k++)
@@ -69,9 +71,14 @@ int main() {
 		}
 	}
 
-	PAPI_read_counters(counters, 2);
+	PAPI_read_counters(counters, 4);
 
-	printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+	//printf("L1 data cache accesses: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", 
+		counters[0],(double)counters[0] / (double)counters[1]);
+
+	printf("%lld L2 cache misses (%.3lf%% misses)\n", 
+		counters[2],(double)counters[2] / (double)counters[3]);
 
 	// !!! STOP COUNTERS !!!
 
@@ -112,9 +119,6 @@ int main() {
     		c[j] = i*j;
     	}
     }
-
-    printf("Number of HW counters: %d\n", PAPI_num_counters());
-    printf("Event chooser: %d\n", papi_event_chooser());
 
 	return 0;
 }
