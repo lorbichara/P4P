@@ -57,7 +57,7 @@ int main() {
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int i = PAPI_start_counters(PAPI_events, 4);
+	int w = PAPI_start_counters(PAPI_events, 4);
 
 	// matrix multiplication
 	for(int k = 0; k < d; k++)
