@@ -1,4 +1,4 @@
-//#include <papi.h>
+#include <papi.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -46,18 +46,16 @@ int main() {
 		}
 	}
 
-	// !!! INITIALIZE COUNTERS !!!
-	// Total Cycles
-	
-	// long long counters[2];
+	// !!! INITIALIZE COUNTERS !!!	
+	long long counters[2];
 
-	// int PAPI_events[] = {
-	// 	PAPI_TOT_CYC,
-	// 	PAPI_TOT_INS
-	// };
+	int PAPI_events[] = {
+		PAPI_TOT_CYC,
+ 		PAPI_TOT_INS
+	};
 
-	// PAPI_library_init(PAPI_VER_CURRENT);
-	// int i = PAPI_start_counters(PAPI_events, 2);
+	PAPI_library_init(PAPI_VER_CURRENT);
+	int i = PAPI_start_counters(PAPI_events, 2);
 
 	// matrix multiplication
 	for(int i = 0; i < d; i++)
@@ -72,22 +70,22 @@ int main() {
 		}
 	}
 
-	// PAPI_read_counters(counters, 2);
+	PAPI_read_counters(counters, 2);
 
-	// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+	printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
 
 	// !!! STOP COUNTERS !!!
 
 	//print result matrix
-	// for(int i = 0; i < d; i++)
-	// {
-	// 	for(int j = 0; j < d; j++)
-	// 	{
-	// 		printf("%lf \t", result[i][j]);
-	// 	}
+	for(int i = 0; i < d; i++)
+	{
+	 	for(int j = 0; j < d; j++)
+	 	{
+	 		printf("%lf \t", result[i][j]);
+	 	}
 
-	// 	printf("\n");
-	// }
+	 	printf("\n");
+	 }
 
 	// free the memory used for the matrices
 	for (int i = 0; i < d; i++)
