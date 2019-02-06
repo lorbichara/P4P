@@ -3,6 +3,17 @@
 #include <stdlib.h>
 
 int main() {
+	// clean cache by reading a lot of unuseful data
+    const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+    char *c = (char *)malloc(size);
+    for (int i = 0; i < 0xffff; i++)
+    {
+    	for (int j = 0; j < size; j++)
+    	{
+    		c[j] = i*j;
+    	}
+    }
+
 	int d;
 	printf("Matrix dimension? ");
 	scanf("%d", &d);
@@ -116,17 +127,6 @@ int main() {
 
     // flush pipeline
     // CPUID
-
-    // clean cache by reading a lot of unuseful data
-    const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-    char *c = (char *)malloc(size);
-    for (int i = 0; i < 0xffff; i++)
-    {
-    	for (int j = 0; j < size; j++)
-    	{
-    		c[j] = i*j;
-    	}
-    }
 
 	return 0;
 }
