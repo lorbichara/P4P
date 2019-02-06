@@ -109,7 +109,7 @@ int main() {
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock);
 
-	execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec‐tick.tv_nsec;
+	execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec-tick.tv_nsec;
 	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime);
 
 	//MATRIX 2
@@ -132,7 +132,7 @@ int main() {
 
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock2);
 
-	execTime2 = 1000000000 * (tock2.tv_sec - tick2.tv_sec) + tock2.tv_nsec‐tick2.tv_nsec;
+	execTime2 = 1000000000 * (tock2.tv_sec - tick2.tv_sec) + tock2.tv_nsec-tick2.tv_nsec;
 	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime2);
 
 	/* Collect the data into the variables passed in */
