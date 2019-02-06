@@ -58,11 +58,11 @@ int main() {
 	int i = PAPI_start_counters(PAPI_events, 2);
 
 	// matrix multiplication
-	for(int i = 0; i < d; i++)
+	for(int k = 0; k < d; k++)
 	{
-		for(int j = 0; j < d; j++)
+		for(int i = 0; i < d; i++)
 		{
-			for(int k = 0; k < d; k++)
+			for(int j = 0; j < d; j++)
 			{
 				result[i][j] += matA[i][k] * matB[k][j];
 			}
