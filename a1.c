@@ -57,6 +57,11 @@ int main() {
 		}
 	}
 
+	/* Setup PAPI library and begin collecting data from the counters */
+	if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
+		test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
+
+	/*
 	// !!! INITIALIZE COUNTERS !!!	
 	long long counters[2];
 
@@ -73,6 +78,7 @@ int main() {
 
 	PAPI_library_init(PAPI_VER_CURRENT);
 	int w = PAPI_start_counters(PAPI_events, 2);
+	*/
 
 	// matrix multiplication
 	for(int i = 0; i < d; i++)
@@ -86,6 +92,16 @@ int main() {
 		}
 	}
 
+	/* Collect the data into the variables passed in */
+	if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
+		test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
+
+	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",
+	real_time, proc_time, flpins, mflops);
+	printf("%s\tPASSED\n", __FILE__);
+	PAPI_shutdown();
+
+	/*
 	PAPI_read_counters(counters, 2);
 
 	// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
@@ -97,10 +113,11 @@ int main() {
 	// 	counters[2],(double)counters[2] / (double)counters[3]);
 
 	printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
-
+	
 
 	// !!! STOP COUNTERS !!!
-
+	*/
+	
 	//print result matrix
 	/*for(int i = 0; i < d; i++)
 	{
