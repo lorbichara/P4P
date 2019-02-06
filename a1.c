@@ -1,4 +1,4 @@
-#include <papi.h>
+//#include <papi.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,8 +7,22 @@ int main() {
 	printf("Matrix dimension? ");
 	scanf("%d", &d);
 
-	double matA[d][d];
-	double matB[d][d];
+	//create matrices using malloc so they're big enough
+	double ** matA;
+	double ** matB;
+	double ** result;
+
+	matA = (double**)malloc(sizeof(double*)*d);
+	for(int i = 0; i < d; i++)
+		matA[i] = (double*)malloc(sizeof(double)*d);
+
+	matB = (double**)malloc(sizeof(double*)*d);
+	for(int i = 0; i < d; i++)
+		matB[i] = (double*)malloc(sizeof(double)*d);
+
+	result = (double**)malloc(sizeof(double*)*d);
+	for(int i = 0; i < d; i++)
+		result[i] = (double*)malloc(sizeof(double)*d);
 
 	// initialize matrix A with random doubles
 	for(int i = 0; i < d; i++)
@@ -32,20 +46,18 @@ int main() {
 		}
 	}
 
-	double result[d][d]; // matrix that will store the result of the mult
-	
 	// !!! INITIALIZE COUNTERS !!!
 	// Total Cycles
 	
-	long long counters[2];
+	// long long counters[2];
 
-	int PAPI_events[] = {
-		PAPI_TOT_CYC,
-		PAPI_TOT_INS
-	};
+	// int PAPI_events[] = {
+	// 	PAPI_TOT_CYC,
+	// 	PAPI_TOT_INS
+	// };
 
-	PAPI_library_init(PAPI_VER_CURRENT);
-	int i = PAPI_start_counters(PAPI_events, 2);
+	// PAPI_library_init(PAPI_VER_CURRENT);
+	// int i = PAPI_start_counters(PAPI_events, 2);
 
 	// matrix multiplication
 	for(int i = 0; i < d; i++)
@@ -60,24 +72,35 @@ int main() {
 		}
 	}
 
-	PAPI_read_counters(counters, 2);
+	// PAPI_read_counters(counters, 2);
 
-	printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+	// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
 
 	// !!! STOP COUNTERS !!!
 
-	// print result matrix
-	/*for(int i = 0; i < d; i++)
-	{
-		for(int j = 0; j < d; j++)
-		{
-			printf("%lf \t", result[i][j]);
-		}
+	//print result matrix
+	// for(int i = 0; i < d; i++)
+	// {
+	// 	for(int j = 0; j < d; j++)
+	// 	{
+	// 		printf("%lf \t", result[i][j]);
+	// 	}
 
-		printf("\n");
-	}*/
+	// 	printf("\n");
+	// }
 
-	//printf("Number of HW counters: %d\n", PAPI_num_counters());
+	// free the memory used for the matrices
+	for (int i = 0; i < d; i++)
+        free(matA[i]);
+    free(matA);
+
+    for (int i = 0; i < d; i++)
+        free(matB[i]);
+    free(matB);
+
+    for (int i = 0; i < d; i++)
+        free(result[i]);
+    free(result);
 
 	return 0;
 }
