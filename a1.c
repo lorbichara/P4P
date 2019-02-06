@@ -113,5 +113,8 @@ int main() {
     	}
     }
 
+    printf("Number of HW counters: %d\n", PAPI_num_counters());
+    printf("Event chooser: %d\n", papi_event_chooser());
+
 	return 0;
 }
