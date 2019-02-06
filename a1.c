@@ -1,7 +1,7 @@
 #include <papi.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+static void test_fail(char *file, int line, char *call, int retval);
 int main() {
 	// clean cache by reading a lot of unuseful data
     const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
@@ -57,9 +57,12 @@ int main() {
 		}
 	}
 
+	float real_time, proc_time, mflops;
+	long long flpins;
+	int retval;
+
 	/* Setup PAPI library and begin collecting data from the counters */
-	if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
-		test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
+	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
 
 	/*
 	// !!! INITIALIZE COUNTERS !!!	
@@ -92,17 +95,12 @@ int main() {
 		}
 	}
 
-	float real_time, proc_time, mflops;
-	long long flpins;
-	int retval;
-
 	/* Collect the data into the variables passed in */
-	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops)
+	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
 	// if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
 	// 	test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
 
-	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",
-	real_time, proc_time, flpins, mflops);
+	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
 
 	/*
