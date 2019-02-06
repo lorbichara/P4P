@@ -47,41 +47,46 @@ int main() {
 	}
 
 	// !!! INITIALIZE COUNTERS !!!	
-	long long counters[4];
+	long long counters[2];
 
 	int PAPI_events[] = {
 		// PAPI_TOT_CYC,
 		// PAPI_TOT_INS,
-		PAPI_L1_DCM,
-		PAPI_L1_DCA,
-		PAPI_L2_DCM,
-		PAPI_L2_DCA,
+		// PAPI_L1_DCM,
+		// PAPI_L1_DCA,
+		// PAPI_L2_DCM,
+		// PAPI_L2_DCA,
+		PAPI_LST_INS,
+		PAPI_flips
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 4);
+	int w = PAPI_start_counters(PAPI_events, 2);
 
 	// matrix multiplication
-	for(int k = 0; k < d; k++)
+	for(int i = 0; i < d; i++)
 	{
-		for(int i = 0; i < d; i++)
+		for(int j = 0; j < d; j++)
 		{
-			for(int j = 0; j < d; j++)
+			for(int k = 0; k < d; k++)
 			{
 				result[i][j] += matA[i][k] * matB[k][j];
 			}
 		}
 	}
 
-	PAPI_read_counters(counters, 4);
+	PAPI_read_counters(counters, 2);
 
 	// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
 
-	printf("%lld L1 cache misses (%.3lf%% misses)\n", 
-		counters[0],(double)counters[0] / (double)counters[1]);
+	// printf("%lld L1 cache misses (%.3lf%% misses)\n", 
+	// 	counters[0],(double)counters[0] / (double)counters[1]);
 
-	printf("%lld L2 cache misses (%.3lf%% misses)\n", 
-		counters[2],(double)counters[2] / (double)counters[3]);
+	// printf("%lld L2 cache misses (%.3lf%% misses)\n", 
+	// 	counters[2],(double)counters[2] / (double)counters[3]);
+
+	printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
+
 
 	// !!! STOP COUNTERS !!!
 
