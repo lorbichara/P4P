@@ -1,6 +1,8 @@
 #include <papi.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <stdint.h>
 
 int main() {
 
@@ -58,13 +60,15 @@ int main() {
 		}
 	}
 
-	//measure execution time using papi
-	float real_time, proc_time, mflops;
-	long long flpins;
-	int execTime;
+	// //measure execution time using papi
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
 
-	/* Setup PAPI library and begin collecting data from the counters */
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	//  Setup PAPI library and begin collecting data from the counters 
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
+
 
 	/*
 	// !!! INITIALIZE COUNTERS !!!	
@@ -85,6 +89,11 @@ int main() {
 	int w = PAPI_start_counters(PAPI_events, 2);
 	*/
 
+	uint64_t execTime;
+	struct timespec tick, tock;
+
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tick);
+
 	// matrix multiplication
 	for(int i = 0; i < d; i++)
 	{
@@ -97,11 +106,16 @@ int main() {
 		}
 	}
 
-	/* Collect the data into the variables passed in */
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock);
 
-	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
-	PAPI_shutdown();
+	execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec‐tick.tv_nsec;
+	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime);
+
+	/* Collect the data into the variables passed in */
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
+	// printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
+	// PAPI_shutdown();
 
 	/*
 	PAPI_read_counters(counters, 2);
