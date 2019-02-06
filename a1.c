@@ -112,29 +112,6 @@ int main() {
 	execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec-tick.tv_nsec;
 	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime);
 
-	//MATRIX 2
-	uint64_t execTime2;
-	struct timespec2 tick2, tock2;
-
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tick2);
-
-	// matrix multiplication
-	for(int j = 0; j < d; j++)
-	{
-		for(int i = 0; i < d; i++)
-		{
-			for(int k = 0; k < d; k++)
-			{
-				result[i][j] += matA[i][k] * matB[k][j];
-			}
-		}
-	}
-
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock2);
-
-	execTime2 = 1000000000 * (tock2.tv_sec - tick2.tv_sec) + tock2.tv_nsec-tick2.tv_nsec;
-	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime2);
-
 	/* Collect the data into the variables passed in */
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
