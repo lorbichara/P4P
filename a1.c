@@ -1,8 +1,9 @@
 #include <papi.h>
 #include <stdio.h>
 #include <stdlib.h>
-static void test_fail(char *file, int line, char *call, int retval);
+
 int main() {
+
 	// clean cache by reading a lot of unuseful data
     const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
     char *c = (char *)malloc(size);
@@ -57,12 +58,13 @@ int main() {
 		}
 	}
 
+	//measure execution time using papi
 	float real_time, proc_time, mflops;
 	long long flpins;
-	int retval;
+	int execTime;
 
 	/* Setup PAPI library and begin collecting data from the counters */
-	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	/*
 	// !!! INITIALIZE COUNTERS !!!	
@@ -96,9 +98,7 @@ int main() {
 	}
 
 	/* Collect the data into the variables passed in */
-	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
-	// if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
-	// 	test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
@@ -119,17 +119,6 @@ int main() {
 
 	// !!! STOP COUNTERS !!!
 	*/
-	
-	//print result matrix
-	/*for(int i = 0; i < d; i++)
-	{
-	 	for(int j = 0; j < d; j++)
-	 	{
-	 		printf("%lf \t", result[i][j]);
-	 	}
-
-	 	printf("\n");
-	 }*/
 
 	// free the memory used for the matrices
 	for (int i = 0; i < d; i++)
