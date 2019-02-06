@@ -82,6 +82,17 @@ int main() {
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
 
+	//print result matrix
+	for(int i = 0; i < d; i++)
+	{
+	 	for(int j = 0; j < d; j++)
+	 	{
+	 		printf("%lf \t", result[i][j]);
+	 	}
+
+	 	printf("\n");
+	}
+
 	/* Setup PAPI library and begin collecting data from the counters */
 	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
 
@@ -103,6 +114,17 @@ int main() {
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
 
+	//print result matrix
+	for(int i = 0; i < d; i++)
+	{
+	 	for(int j = 0; j < d; j++)
+	 	{
+	 		printf("%lf \t", result[i][j]);
+	 	}
+
+	 	printf("\n");
+	}
+
 	/* Setup PAPI library and begin collecting data from the counters */
 	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
 
@@ -123,6 +145,17 @@ int main() {
 
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
+
+	//print result matrix
+	for(int i = 0; i < d; i++)
+	{
+	 	for(int j = 0; j < d; j++)
+	 	{
+	 		printf("%lf \t", result[i][j]);
+	 	}
+
+	 	printf("\n");
+	}
 
 	/* Setup PAPI library and begin collecting data from the counters */
 	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
@@ -145,6 +178,17 @@ int main() {
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
 
+	//print result matrix
+	for(int i = 0; i < d; i++)
+	{
+	 	for(int j = 0; j < d; j++)
+	 	{
+	 		printf("%lf \t", result[i][j]);
+	 	}
+
+	 	printf("\n");
+	}
+
 	/* Setup PAPI library and begin collecting data from the counters */
 	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
 
@@ -165,6 +209,17 @@ int main() {
 
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 	PAPI_shutdown();
+
+	//print result matrix
+	for(int i = 0; i < d; i++)
+	{
+	 	for(int j = 0; j < d; j++)
+	 	{
+	 		printf("%lf \t", result[i][j]);
+	 	}
+
+	 	printf("\n");
+	}
 
 	/* Setup PAPI library and begin collecting data from the counters */
 	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops);
