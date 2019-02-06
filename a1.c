@@ -50,6 +50,8 @@ int main() {
 	long long counters[4];
 
 	int PAPI_events[] = {
+		// PAPI_TOT_CYC,
+		// PAPI_TOT_INS,
 		PAPI_L1_DCM,
 		PAPI_L1_DCA,
 		PAPI_L2_DCM,
@@ -73,7 +75,8 @@ int main() {
 
 	PAPI_read_counters(counters, 4);
 
-	//printf("L1 data cache accesses: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+	// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+
 	printf("%lld L1 cache misses (%.3lf%% misses)\n", 
 		counters[0],(double)counters[0] / (double)counters[1]);
 
