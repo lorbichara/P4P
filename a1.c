@@ -92,13 +92,17 @@ int main() {
 		}
 	}
 
+	float real_time, proc_time, mflops;
+	long long flpins;
+	int retval;
+
 	/* Collect the data into the variables passed in */
-	if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
-		test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
+	retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops)
+	// if((retval=PAPI_flops( &real_time, &proc_time, &flpins, &mflops))<PAPI_OK)
+	// 	test_fail(__FILE__, __LINE__, "PAPI_flops", retval);
 
 	printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",
 	real_time, proc_time, flpins, mflops);
-	printf("%s\tPASSED\n", __FILE__);
 	PAPI_shutdown();
 
 	/*
