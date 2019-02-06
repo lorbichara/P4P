@@ -62,7 +62,6 @@ int main() {
 	{
 		for(int j = 0; j < d; j++)
 		{
-			result[i][j] = 0;
 			for(int k = 0; k < d; k++)
 			{
 				result[i][j] += matA[i][k] * matB[k][j];
@@ -77,7 +76,7 @@ int main() {
 	// !!! STOP COUNTERS !!!
 
 	//print result matrix
-	for(int i = 0; i < d; i++)
+	/*for(int i = 0; i < d; i++)
 	{
 	 	for(int j = 0; j < d; j++)
 	 	{
@@ -85,7 +84,7 @@ int main() {
 	 	}
 
 	 	printf("\n");
-	 }
+	 }*/
 
 	// free the memory used for the matrices
 	for (int i = 0; i < d; i++)
@@ -101,7 +100,7 @@ int main() {
     free(result);
 
     // flush pipeline
-    CPUID
+    // CPUID
 
     // clean cache by reading a lot of unuseful data
     const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
