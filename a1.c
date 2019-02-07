@@ -93,7 +93,8 @@ int main() {
 	uint64_t execTime;
 	struct timespec tick, tock;
 
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tick);
+	//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tick);
+	clock_gettime(CLOCK_REALTIME, &tick);
 
 	// matrix multiplication
 	for(int i = 0; i < d; i++)
@@ -107,7 +108,8 @@ int main() {
 		}
 	}
 
-	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock);
+	// clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock);
+	clock_gettime(CLOCK_REALTIME, &tock);
 
 	execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec-tick.tv_nsec;
 	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime);
