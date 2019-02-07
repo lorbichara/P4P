@@ -9,6 +9,11 @@
 #include <stdint.h>
 
 int main() {
+	int a, b;
+	__asm__("cpuid"
+            :"=a"(b)                 // EAX into b (output)
+            :"0"(a)                  // a into EAX (input)
+            :"%ebx","%ecx","%edx");
 
 	// clean cache by reading a lot of unuseful data
     const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
@@ -20,11 +25,6 @@ int main() {
     		c[j] = i*j;
     	}
     }
-
-    asm __volatile__ (
-		" mfence \n"
-		" lfence \n"
-	);
 
     // ask the user for matrix dimension 
 	int d;
@@ -167,11 +167,6 @@ int main() {
     for (int i = 0; i < d; i++)
         free(result[i]);
     free(result);
-
-    asm __volatile__ (
-		" mfence \n"
-		" lfence \n"
-	);
 
 	return 0;
 }
