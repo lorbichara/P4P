@@ -7,4 +7,7 @@ The program also includes several measurements used to complete assignment 1. Si
 
 The output is displayed as a label indicating the measurement, and the value.
 
-To compile the code, uncompress/untar the .tar.gz file, and inside that directory use the "make" command. This will create an executable called "executable" linking to the required libraries and using the options. To execute, run the following command: ./executable
+To compile the code, uncompress/untar the .tar.gz file using the command: tar xvf a1.tar.gz
+Inside that directory execute the command: make 
+This will create an executable called "executable" linking to the required libraries and using the options.
+To execute, run the following command: ./executable
