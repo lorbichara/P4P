@@ -21,6 +21,11 @@ int main() {
     	}
     }
 
+    asm __volatile__ (
+		" mfence \n"
+		" lfence \n"
+	);
+
     // ask the user for matrix dimension 
 	int d;
 	printf("Matrix dimension? ");
@@ -162,6 +167,11 @@ int main() {
     for (int i = 0; i < d; i++)
         free(result[i]);
     free(result);
+
+    asm __volatile__ (
+		" mfence \n"
+		" lfence \n"
+	);
 
 	return 0;
 }
