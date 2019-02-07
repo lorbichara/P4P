@@ -68,7 +68,7 @@ int main() {
 	// ask the user for the desired method to take measurements
 	char m;
 	printf("Do you want to execution time measurements using PAPI (p) or clock_gettime (c)? ");
-	scanf("%c", &m);
+	scanf(" %c", &m);
 
 	if(m == 'p') // PAPI
 	{	
