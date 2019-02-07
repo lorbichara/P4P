@@ -73,26 +73,26 @@ int main() {
 	if(m == 'p') // PAPI
 	{	
 		// this is to measure execution time:
-		// float real_time, proc_time, mflops;
-		// long long flpins;
-		// int execTime;
-		// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+		float real_time, proc_time, mflops;
+		long long flpins;
+		int execTime;
+		execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-		long long counters[2];
+		//long long counters[2];
 
-		int PAPI_events[] = {
-			// PAPI_TOT_CYC,
-			// PAPI_TOT_INS,
-			// PAPI_L1_DCM,
-			// PAPI_L1_DCA,
-			// PAPI_L2_DCM,
-			// PAPI_L2_DCA,
-			PAPI_LST_INS,
-			PAPI_flips
-		};
+		// int PAPI_events[] = {
+		// 	PAPI_TOT_CYC,
+		// 	PAPI_TOT_INS,
+		// 	// PAPI_L1_DCM,
+		// 	// PAPI_L1_DCA,
+		// 	// PAPI_L2_DCM,
+		// 	// PAPI_L2_DCA,
+		// 	//PAPI_LST_INS,
+		// 	//PAPI_flips
+		// };
 
-		PAPI_library_init(PAPI_VER_CURRENT);
-		int w = PAPI_start_counters(PAPI_events, 2);
+		// PAPI_library_init(PAPI_VER_CURRENT);
+		// int w = PAPI_start_counters(PAPI_events, 2);
 
 		// matrix multiplication
 		for(int i = 0; i < d; i++)
@@ -107,9 +107,9 @@ int main() {
 		}
 
 		// for execution time:
-		// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+		execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-		PAPI_read_counters(counters, 2);
+		// PAPI_read_counters(counters, 2);
 
 		// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
 
@@ -117,11 +117,11 @@ int main() {
 
 		// printf("%lld L2 cache misses (%.3lf%% misses)\n", counters[2],(double)counters[2] / (double)counters[3]);
 
-		printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
+		// printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
 
 		// for execution time:
-		// printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
-		//PAPI_shutdown();
+		printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
+		PAPI_shutdown();
 	}
 	else if(m == 'c') // clock_gettime
 	{
