@@ -1,3 +1,7 @@
+// Lorraine Bichara - lb34995
+// CS 377P
+// february 6, 2019
+
 #include <papi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,11 +21,12 @@ int main() {
     	}
     }
 
+    // ask the user for matrix dimension 
 	int d;
 	printf("Matrix dimension? ");
 	scanf("%d", &d);
 
-	//create matrices using malloc so they're big enough
+	// create matrices using malloc so they're big enough
 	double ** matA;
 	double ** matB;
 	double ** result;
@@ -60,82 +65,90 @@ int main() {
 		}
 	}
 
-	// //measure execution time using papi
-	// float real_time, proc_time, mflops;
-	// long long flpins;
-	// int execTime;
+	// ask the user for the desired method to take measurements
+	char m;
+	printf("Do you want to execution time measurements using PAPI (p) or clock_gettime (c)? ");
+	scanf("%c", &m);
 
-	//  Setup PAPI library and begin collecting data from the counters 
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	if(m == 'p') // PAPI
+	{	
+		// this is to measure execution time:
+		// float real_time, proc_time, mflops;
+		// long long flpins;
+		// int execTime;
+		// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
+		long long counters[2];
 
+		int PAPI_events[] = {
+			// PAPI_TOT_CYC,
+			// PAPI_TOT_INS,
+			// PAPI_L1_DCM,
+			// PAPI_L1_DCA,
+			// PAPI_L2_DCM,
+			// PAPI_L2_DCA,
+			PAPI_LST_INS,
+			PAPI_flips
+		};
 
-	/*
-	// !!! INITIALIZE COUNTERS !!!	
-	long long counters[2];
+		PAPI_library_init(PAPI_VER_CURRENT);
+		int w = PAPI_start_counters(PAPI_events, 2);
 
-	int PAPI_events[] = {
-		// PAPI_TOT_CYC,
-		// PAPI_TOT_INS,
-		// PAPI_L1_DCM,
-		// PAPI_L1_DCA,
-		// PAPI_L2_DCM,
-		// PAPI_L2_DCA,
-		PAPI_LST_INS,
-		PAPI_flips
-	};
-
-	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 2);
-	*/
-
-	//MATRIX 1
-	uint64_t execTime;
-	struct timespec tick, tock;
-
-	//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tick);
-	clock_gettime(CLOCK_REALTIME, &tick);
-
-	// matrix multiplication
-	for(int i = 0; i < d; i++)
-	{
-		for(int j = 0; j < d; j++)
+		// matrix multiplication
+		for(int i = 0; i < d; i++)
 		{
-			for(int k = 0; k < d; k++)
+			for(int j = 0; j < d; j++)
 			{
-				result[i][j] += matA[i][k] * matB[k][j];
+				for(int k = 0; k < d; k++)
+				{
+					result[i][j] += matA[i][k] * matB[k][j];
+				}
 			}
 		}
+
+		// for execution time:
+		// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
+		PAPI_read_counters(counters, 2);
+
+		// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
+
+		// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+
+		// printf("%lld L2 cache misses (%.3lf%% misses)\n", counters[2],(double)counters[2] / (double)counters[3]);
+
+		printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
+
+		// for execution time:
+		// printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
+		//PAPI_shutdown();
 	}
+	else if(m == 'c') // clock_gettime
+	{
+		uint64_t execTime;
+		struct timespec tick, tock;
 
-	// clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock);
-	clock_gettime(CLOCK_REALTIME, &tock);
+		//clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tick);
+		clock_gettime(CLOCK_REALTIME, &tick);
 
-	execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec-tick.tv_nsec;
-	printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime);
+		// matrix multiplication
+		for(int i = 0; i < d; i++)
+		{
+			for(int j = 0; j < d; j++)
+			{
+				for(int k = 0; k < d; k++)
+				{
+					result[i][j] += matA[i][k] * matB[k][j];
+				}
+			}
+		}
 
-	/* Collect the data into the variables passed in */
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+		// clock_gettime(CLOCK_THREAD_CPUTIME_ID, &tock);
+		clock_gettime(CLOCK_REALTIME, &tock);
 
-	// printf("Real_time:\t%f\nProc_time:\t%f\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
-	// PAPI_shutdown();
-
-	/*
-	PAPI_read_counters(counters, 2);
-
-	// printf("Total cycles: %lld\nTotal instructions: %lld\n", counters[0], counters[1]);
-
-	// printf("%lld L1 cache misses (%.3lf%% misses)\n", 
-	// 	counters[0],(double)counters[0] / (double)counters[1]);
-
-	// printf("%lld L2 cache misses (%.3lf%% misses)\n", 
-	// 	counters[2],(double)counters[2] / (double)counters[3]);
-
-	printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
-	
-
-	// !!! STOP COUNTERS !!!
-	*/
+		execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec-tick.tv_nsec;
+		printf("elapsed process CPU time = %llu nanoseconds\n", (long long unsigned int)execTime);
+	}
 
 	// free the memory used for the matrices
 	for (int i = 0; i < d; i++)
@@ -149,9 +162,6 @@ int main() {
     for (int i = 0; i < d; i++)
         free(result[i]);
     free(result);
-
-    // flush pipeline
-    // CPUID
 
 	return 0;
 }
