@@ -9,24 +9,26 @@
 #include <stdint.h>
 
 int main() {
+
+	//CPUID
 	int a, b;
 	__asm__("cpuid"
-            :"=a"(b)                 // EAX into b (output)
-            :"0"(a)                  // a into EAX (input)
-            :"%ebx","%ecx","%edx");
+			:"=a"(b)
+			:"0"(a)
+			:"%ebx","%ecx","%edx");
 
 	// clean cache by reading a lot of unuseful data
-    const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-    char *c = (char *)malloc(size);
-    for (int i = 0; i < 0xffff; i++)
-    {
-    	for (int j = 0; j < size; j++)
-    	{
-    		c[j] = i*j;
-    	}
-    }
+	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+	char *c = (char *)malloc(size);
+	for (int i = 0; i < 0xffff; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			c[j] = i*j;
+		}
+	}
 
-    // ask the user for matrix dimension 
+	// ask the user for matrix dimension 
 	int d;
 	printf("Matrix dimension? ");
 	scanf("%d", &d);
@@ -157,16 +159,16 @@ int main() {
 
 	// free the memory used for the matrices
 	for (int i = 0; i < d; i++)
-        free(matA[i]);
-    free(matA);
+		free(matA[i]);
+	free(matA);
 
-    for (int i = 0; i < d; i++)
-        free(matB[i]);
-    free(matB);
+	for (int i = 0; i < d; i++)
+		free(matB[i]);
+	free(matB);
 
-    for (int i = 0; i < d; i++)
-        free(result[i]);
-    free(result);
+	for (int i = 0; i < d; i++)
+		free(result[i]);
+	free(result);
 
 	return 0;
 }
