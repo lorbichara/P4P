@@ -120,7 +120,7 @@ int main() {
 		// printf("Total load store instructions: %lld\nTotal floating point instructions: %lld\n", counters[0], counters[1]);
 
 		// for execution time:
-		printf("Real_time:\t%f nanoseconds\nProc_time:\t%f nanoseconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time * 1000000000, proc_time * 1000000000, flpins, mflops);
+		printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 		PAPI_shutdown();
 	}
 	else if(m == 'c') // clock_gettime
