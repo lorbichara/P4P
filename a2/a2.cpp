@@ -115,41 +115,26 @@ struct CSRRep DIMACStoCSR(string fileName)
 	csr.ci = ci;
 	csr.ai = ai;
 
-
-	//print CSR representation
-	// for(int i = 0; i < rp.size(); i++)
-	// {
-	// 	cout << rp[i] << " "; 
-	// }
-	// cout << endl;
-
-	// for(int i = 0; i < ci.size(); i++)
-	// {
-	// 	cout << ci[i] << " "; 
-	// }
-	// cout << endl;
-
-	// for(int i = 0; i < ai.size(); i++)
-	// {
-	// 	cout << ai[i] << " "; 
-	// }
-	// cout << endl;
-
 	return csr;
 }
 
 //Routine that takes a graph in CSR representation in memory and prints it out to a file in DIMACS format.
-void CSRtoDIMACS(vector<int> rp, vector<int> ci, vector<int>ai)
+void CSRtoDIMACS(struct CSRRep csr)
 {
 	ofstream f;
 	f.open("CSRtoDIMACS.dimacs");
 
 	//make a vector that includes source nodes using the rp vector.
 	vector<int> source;
-	int count = 1;
-	for(int i = 1; i < rp.size(); i++)
+	int count = 0;
+	if(csr.rp[0] == 0)
+		count = 2;
+	else
+		count = 1;
+
+	for(int i = 1; i < csr.rp.size(); i++)
 	{
-		int subtraction = rp[i] - rp[i-1];
+		int subtraction = csr.rp[i] - csr.rp[i-1];
 		while(subtraction != 0)
 		{
 			source.push_back(count);
@@ -158,11 +143,11 @@ void CSRtoDIMACS(vector<int> rp, vector<int> ci, vector<int>ai)
 		count++;
 	}
 
-	int nEdges = ci.size(); //number of edges
+	int nEdges = csr.ci.size(); //number of edges
 
 	//get number of nodes
 	vector<int> allNodes = source;
-	allNodes.insert(allNodes.end(), ai.begin(), ai.end());
+	allNodes.insert(allNodes.end(), csr.ai.begin(), csr.ai.end());
 	sort(allNodes.begin(), allNodes.end());
 	int nNodes = std::unique(allNodes.begin(), allNodes.end()) - allNodes.begin();
 
@@ -172,9 +157,9 @@ void CSRtoDIMACS(vector<int> rp, vector<int> ci, vector<int>ai)
 	for(int i = 0; i < source.size(); i++)
 	{
 		if(i+1 != source.size())
-			f << "a " << source[i] << " " << ci[i] << " " << ai[i] << endl;
+			f << "a " << source[i] << " " << csr.ci[i] << " " << csr.ai[i] << endl;
 		else
-			f << "a " << source[i] << " " << ci[i] << " " << ai[i];
+			f << "a " << source[i] << " " << csr.ci[i] << " " << csr.ai[i];
 	}
 
 	f.close();
@@ -241,7 +226,7 @@ void pageRank(struct CSRRep csr)
 	}
 
 	double d = 0.85;
-	double desiredError = 0.0001;
+	double desiredError = pow(10, -4);
 	double oldRank = 0;
 	double newRank = 0;
 
@@ -296,10 +281,17 @@ void pageRank(struct CSRRep csr)
 			e = false;
 	}
 
-	//print final results of page rank
+	//scale page rank so the sum of all nodes is = 1 and print results
+	double totalSum = 0;
 	for (const auto &p : ranks)
 	{
-		cout << "Node " << p.first << ": " << p.second << endl;
+		totalSum += p.second;
+	}
+
+	for (auto &q : ranks)
+	{
+		q.second = q.second/totalSum;
+		cout << "Node " << q.first << ": " << q.second << endl;
 	}
 
 	CSRtoFile(ranks); //Call routine that outputs node numbers and labels to a file.
