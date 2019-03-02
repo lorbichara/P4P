@@ -1,3 +1,7 @@
+//Lorraine Bichara lb34995
+//Programming for Performance
+//Assignment 2: Graph algorithms
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,6 +11,7 @@
 #include <iomanip>
 using namespace std;
 
+//struct that'll help me convert from COO to CSR
 struct cooRep {
 	int source;
 	int destination;
@@ -21,13 +26,22 @@ struct cooRep {
 	}
 };
 
-//routine that reads a graph in DIMACS format from a file and constructs a Compressed-Sparse-Row (CSR) representation of that graph in memory..
-void DIMACStoCSR(string fileName)
-{	
+//struct that holds the CSR representation
+struct CSRRep {
+	vector<int> rp;
+	vector<int> ci;
+	vector<int> ai;
+};
+
+//Routine that reads a graph in DIMACS format from a file and constructs a Compressed-Sparse-Row (CSR) representation of that graph in memory.
+//Returns a CSR struct that holds 3 vectors.
+struct CSRRep DIMACStoCSR(string fileName)
+{
 	string line;
 	ifstream f;
 	f.open(fileName);
 
+	//if the file wasn't found
 	if(!f) {
 		cout << "File wasn't found." << endl;
 		exit(1);
@@ -64,6 +78,7 @@ void DIMACStoCSR(string fileName)
 	vector<int> ci;
 	vector<int> ai;
 
+	//breakdown vector of structs into individual vectors
 	for(int i = 0; i < cooVector.size(); i++)
 	{
 		ci.push_back(cooVector[i].destination);
@@ -95,37 +110,45 @@ void DIMACStoCSR(string fileName)
 		rp.push_back(NNZ);
 	}
 
-	for(int i = 0; i < rp.size(); i++)
-	{
-		cout << rp[i] << " "; 
-	}
-	cout << endl;
+	CSRRep csr;
+	csr.rp = rp;
+	csr.ci = ci;
+	csr.ai = ai;
 
-	for(int i = 0; i < ci.size(); i++)
-	{
-		cout << ci[i] << " "; 
-	}
-	cout << endl;
 
-	for(int i = 0; i < ai.size(); i++)
-	{
-		cout << ai[i] << " "; 
-	}
+	//print CSR representation
+	// for(int i = 0; i < rp.size(); i++)
+	// {
+	// 	cout << rp[i] << " "; 
+	// }
+	// cout << endl;
 
-	cout << endl;
+	// for(int i = 0; i < ci.size(); i++)
+	// {
+	// 	cout << ci[i] << " "; 
+	// }
+	// cout << endl;
+
+	// for(int i = 0; i < ai.size(); i++)
+	// {
+	// 	cout << ai[i] << " "; 
+	// }
+	// cout << endl;
+
+	return csr;
 }
 
-//routine that takes a graph in CSR representation in memory and prints it out to a file in DIMACS format. 
+//Routine that takes a graph in CSR representation in memory and prints it out to a file in DIMACS format.
 void CSRtoDIMACS(vector<int> rp, vector<int> ci, vector<int>ai)
 {
 	ofstream f;
 	f.open("CSRtoDIMACS.dimacs");
 
+	//make a vector that includes source nodes using the rp vector.
 	vector<int> source;
 	int count = 1;
 	for(int i = 1; i < rp.size(); i++)
 	{
-		//cout << rp[i] << " ";
 		int subtraction = rp[i] - rp[i-1];
 		while(subtraction != 0)
 		{
@@ -135,13 +158,15 @@ void CSRtoDIMACS(vector<int> rp, vector<int> ci, vector<int>ai)
 		count++;
 	}
 
-	int nEdges = ci.size();
+	int nEdges = ci.size(); //number of edges
 
+	//get number of nodes
 	vector<int> allNodes = source;
 	allNodes.insert(allNodes.end(), ai.begin(), ai.end());
 	sort(allNodes.begin(), allNodes.end());
 	int nNodes = std::unique(allNodes.begin(), allNodes.end()) - allNodes.begin();
 
+	//print to file
 	f << "p sp " << nNodes << " " << nEdges << endl;
 
 	for(int i = 0; i < source.size(); i++)
@@ -155,121 +180,133 @@ void CSRtoDIMACS(vector<int> rp, vector<int> ci, vector<int>ai)
 	f.close();
 }
 
-void CSRtoFile(vector<int> rp, vector<int> ci, vector<int>ai)
+//Routine that takes a graph in CSR representation in memory, and prints node numbers and node labels, one per line, to a file.
+//Node number: distinguishes it from other nodes and to find its edges in the CSR format representation of the graph.
+//Node label: problem-dependent quantities associated with a particular graph problem you want to solve, what need to be computed.
+void CSRtoFile(map<int, double> ranks)
 {
 	ofstream f;
 	f.open("nodeNumbersNodeLabels.dimacs");
 
+	for (auto myMap : ranks)
+	{
+		f << myMap.first << " " << myMap.second << endl;
+	}
+
 	f.close();
 }
 
-void pageRank(vector<int> rp, vector<int> ci, vector<int>ai)
+//Page Rank Algorithm
+//Takes 3 vectors as arguments that represent the CSR format.
+//Doesn't have a return value, but prints the result of the page rank.
+void pageRank(struct CSRRep csr)
 {
-	map<int, vector<int>> salientes;
+	//get vector that stores source nodes
+	vector<int> source;
+	int count = 0;
+	if(csr.rp[0] == 0)
+		count = 2;
+	else
+		count = 1;
 
-	salientes.insert (pair<int,vector<int> >(2, {3}));
-	salientes.insert (pair<int,vector<int> >(3, {2}));
-	salientes.insert (pair<int,vector<int> >(4, {1, 2}));
-	salientes.insert (pair<int,vector<int> >(5, {2, 4, 6}));
-	salientes.insert (pair<int,vector<int> >(6, {2, 5}));
-	salientes.insert (pair<int,vector<int> >(7, {2, 5}));
-	salientes.insert (pair<int,vector<int> >(8, {2, 5}));
-	salientes.insert (pair<int,vector<int> >(9, {2, 5}));
-	salientes.insert (pair<int,vector<int> >(10, {5}));
-	salientes.insert (pair<int,vector<int> >(11, {5}));
+	for(int i = 1; i < csr.rp.size(); i++)
+	{
+		int subtraction = csr.rp[i] - csr.rp[i-1];
+		while(subtraction != 0)
+		{
+			source.push_back(count);
+			subtraction--;
+		}
+		count++;
+	}
 
-	map<int, vector<int>> entrantes;
-	entrantes.insert (pair<int,vector<int> >(1, {4}));
-	entrantes.insert (pair<int,vector<int> >(2, {3, 4, 5, 6, 7, 8, 9}));
-	entrantes.insert (pair<int,vector<int> >(3, {2}));
-	entrantes.insert (pair<int,vector<int> >(4, {5}));
-	entrantes.insert (pair<int,vector<int> >(5, {6, 7, 8, 9, 10, 11}));
-	entrantes.insert (pair<int,vector<int> >(6, {5}));
+	//get total amount of nodes = n
+	vector<int> allNodes = source;
+	allNodes.insert(allNodes.end(), csr.ai.begin(), csr.ai.end());
+	sort(allNodes.begin(), allNodes.end());
+	int nNodes = std::unique(allNodes.begin(), allNodes.end()) - allNodes.begin();
 
-	map<int, double> ranks;
-	int n = 11;
+	//map that holds each source and its outgoing links
+	map<int, vector<int>> outgoing;
+	for(int i = 0; i < source.size(); i++)
+	{
+		outgoing[source[i]].push_back(csr.ci[i]);
+	}
+
+	//map that holds each source and its incoming links
+	map<int, vector<int>> incoming;
+	for(int i = 0; i < csr.ci.size(); i++)
+	{
+		incoming[csr.ci[i]].push_back(source[i]);
+	}
+
 	double d = 0.85;
 	double desiredError = 0.0001;
-	double err = 10000;
 	double oldRank = 0;
 	double newRank = 0;
-	vector<double> errors;
 
-	for(int i = 0; i <= n; i++)
+	//use a vector to calculate errors for each page rank
+	//errors[1] correspond to page rank for node 1, so errors[0] was set to 0 to ignore it
+	//initialize it with 1000
+	vector<double> errors;
+	for(int i = 0; i <= nNodes; i++)
 	{
 		errors.push_back(10000.0);
 	}
-
 	errors[0] = 0.0;
 
-	for(int i = 1; i <= n; i++)
+	//map that'll hold the page rank for each node
+	map<int, double> ranks;
+	for(int i = 1; i <= nNodes; i++)
 	{
-		ranks.insert (pair<int,double>(i, 1.0/n));
+		ranks.insert (pair<int,double>(i, 1.0/nNodes));
 	}
 
 	bool e = false;
-	while(!e)
+	while(!e) //while the errors are still larger than the threshold of 10^-4
 	{
-		for (auto &i : ranks)
+		for (auto &i : ranks) //loop through the map that holds the rank for each node/page
 		{
-			//para el 2 por ejemplo
-			//int j = myMap.find(i.first)->second.size(); //esto devuelve el # de links entrantes a 2 para saber cuantas veces sumar
-
 			double sum = 0;
 
-			if (entrantes.find(i.first) == entrantes.end())
+			if (incoming.find(i.first) == incoming.end()) // not found in map, meaning that this node doesn't have incoming links
 			{
-				//cout << i.first << " ";
-				// not found, meaning that this node doesn't have incoming links
-				sum = i.second/n;
-
-				oldRank = i.second;
-				newRank = ((1-d)/n) + sum * d;
-				errors[i.first] = abs(newRank - oldRank);
-				i.second = newRank;
+				sum = i.second/nNodes; // new page rank = old page rank/n
 			}
 			else
 			{
-				for(int k : entrantes.find(i.first)->second) //esto devuelve cada valor de los vectores. k es 1 numerito
+				for(int k : incoming.find(i.first)->second) //loop through each "incoming node" to the current node we're calculating
 				{
-					sum += (ranks.find(k)->second)/salientes.find(k)->second.size();
+					//for each incoming node, take its page rank and divide it by its number of outgoing links (found in outgoing map)
+					sum += (ranks.find(k)->second)/outgoing.find(k)->second.size();
 				}
-
-				oldRank = i.second;
-				newRank = ((1-d)/n) + sum * d;
-				errors[i.first] = abs(newRank - oldRank);
-				i.second = newRank;
 			}
+
+			//update page rank and errors
+			oldRank = i.second;
+			newRank = ((1-d)/nNodes) + sum * d;
+			errors[i.first] = abs(newRank - oldRank);
+			i.second = newRank;
 	 	}
 
+	 	//check if all errors for every page rank are smaller than the threshold of 10^-4
 		if(all_of(errors.begin(), errors.end(), [desiredError](double i){return i < desiredError;}) )
 			e = true;
 		else
 			e = false;
 	}
 
-cout << endl;
-	for (const auto &p : ranks) {
-	   // std::cout << "m[" << p.first << "] = " << p.second << '\n';
-		cout << p.second << endl;
+	//print final results of page rank
+	for (const auto &p : ranks)
+	{
+		cout << "Node " << p.first << ": " << p.second << endl;
 	}
+
+	CSRtoFile(ranks); //Call routine that outputs node numbers and labels to a file.
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-	// string fileName;
-	// cout << "Introduce the name of the file (with extension) that contains the graph in DIMACS format: ";
-	// cin >> fileName;
-	
-	//DIMACStoCSR(fileName);
-	// vector<int> rp = {0, 0, 1, 2, 4, 7, 9, 11, 13, 15, 16, 17}; 
-	// vector<int> rp = {0, 0, 2, 3, 4}; 
-	// vector<int> ci = {0, 1, 2, 1}; 
-	// vector<int> ai = {5, 8, 3, 6}; 
-	// vector<int> ci = {2, 3, 3, 4, 2, 5, 3, 6, 4, 6}; 
-	// vector<int> ci = {3, 2, 1, 2, 2, 4, 6, 2, 5, 2, 5, 2, 5, 2, 5, 5, 5};
-	// vector<int> ai = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-	// vector<int> ai = {16, 13, 10, 12, 4, 15, 9, 20, 7, 4}; 
-	//CSRtoDIMACS(rp, ci, ai);
-	pageRank(rp, ci, ai);
+	CSRRep csr = DIMACStoCSR(argv[1]);
+	pageRank(csr);
 }
