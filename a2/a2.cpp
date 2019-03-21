@@ -181,6 +181,28 @@ void CSRtoFile(map<int, double> ranks)
 	f.close();
 }
 
+//Computes a histogram of the number of outgoing edges connected to each node.
+void histogram(map<int, vector<int>> outgoing)
+{
+	ofstream f;
+	f.open("histogram.txt");
+
+	//Calculate number of outgoing edges and save it to a map.
+	map<int, int> outgoingEdges;
+	for(auto mapIt = begin(outgoing); mapIt != end(outgoing); ++mapIt)
+	{
+	    outgoingEdges.insert(pair<int,int>(mapIt->first, mapIt->second.size()));
+	}
+
+	//Write results to output file.
+	for(auto mapIt = begin(outgoingEdges); mapIt != end(outgoingEdges); ++mapIt)
+	{
+	    f << mapIt->first << " " << mapIt->second << "\n";
+	}
+
+	f.close();
+}
+
 //Page Rank Algorithm
 //Takes 3 vectors as arguments that represent the CSR format.
 //Doesn't have a return value, but prints the result of the page rank.
@@ -287,12 +309,14 @@ void pageRank(struct CSRRep csr)
 	{
 		totalSum += p.second;
 	}
-
+	
 	for (auto &q : ranks)
 	{
 		q.second = q.second/totalSum;
 		cout << "Node " << q.first << ": " << q.second << endl;
 	}
+
+	histogram(outgoing);
 
 	CSRtoFile(ranks); //Call routine that outputs node numbers and labels to a file.
 }
