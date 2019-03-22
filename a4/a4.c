@@ -65,15 +65,14 @@ void MMM() {
 	int execTime;
 	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-	long long counters[3];
+	long long counters[2];
 	int PAPI_events[] = {
-		PAPI_TOT_CYC,
 		PAPI_L1_DCM,
 		PAPI_L1_DCA
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 3);
+	int w = PAPI_start_counters(PAPI_events, 2);
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -86,9 +85,9 @@ void MMM() {
 		}
 	}
 
-	PAPI_read_counters(counters, 3);
-	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[1],(double)counters[1] / (double)counters[2]);
-	PAPI_shutdown();
+	PAPI_read_counters(counters, 2);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+	//PAPI_shutdown();
 
 	printf("Matrix size: %d\n", matrixSize);
 
