@@ -60,10 +60,10 @@ void MMM() {
 		}
 	}
 
-	float real_time, proc_time, mflops;
-	long long flpins;
-	int execTime;
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	long long counters[2];
 	int PAPI_events[] = {
