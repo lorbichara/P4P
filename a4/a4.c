@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <papi.h>
+#include <time.h>
 
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
@@ -58,6 +60,21 @@ void MMM() {
 		}
 	}
 
+	float real_time, proc_time, mflops;
+	long long flpins;
+	int execTime;
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
+	long long counters[3];
+	int PAPI_events[] = {
+		PAPI_TOT_CYC,
+		PAPI_L1_DCM,
+		PAPI_L1_DCA
+	};
+
+	PAPI_library_init(PAPI_VER_CURRENT);
+	int w = PAPI_start_counters(PAPI_events, 3);
+
 	for(int i = 0; i < matrixSize; i++)
 	{
 		for(int k = 0; k < matrixSize; k++)
@@ -69,32 +86,11 @@ void MMM() {
 		}
 	}
 
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", a[i][j]);
-		}
-		printf("\n");
-	}
+	PAPI_read_counters(counters, 3);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[1],(double)counters[1] / (double)counters[2]);
+	PAPI_shutdown();
 
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", b[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", c[i][j]);
-		}
-		printf("\n");
-	}
+	printf("Matrix size: %d\n", matrixSize);
 
 	Free2DArray((void**)a);
 	Free2DArray((void**)b);
