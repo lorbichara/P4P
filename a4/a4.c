@@ -60,14 +60,33 @@ void MMM() {
 		}
 	}
 
-	long long counters[2];
+	//cleaning cache
+	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+	char *d = (char *)malloc(size);
+	for (int i = 0; i < 0xffff; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			d[j] = i*j;
+		}
+	}
+
+	//Flushing pipeline
+	int a, b;
+	__asm__("cpuid"
+			:"=a"(b)
+			:"0"(a)
+			:"%ebx","%ecx","%edx");
+
+	long long counters[3];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
-		PAPI_L1_DCA
+		PAPI_L1_DCA,
+		PAPI_FLOPS
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 2);
+	int w = PAPI_start_counters(PAPI_events, 3);
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -82,8 +101,16 @@ void MMM() {
 
 	PAPI_read_counters(counters, 2);
 	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
-	
+	printf("Flops: %lld\n", counters[2]);
+
 	PAPI_shutdown();
+
+	//Flushing pipeline
+	int a, b;
+	__asm__("cpuid"
+			:"=a"(b)
+			:"0"(a)
+			:"%ebx","%ecx","%edx");
 
 	printf("Matrix size: %d\n", matrixSize);
 
