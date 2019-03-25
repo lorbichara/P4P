@@ -72,10 +72,10 @@ void MMM() {
 	}
 
 	//Flushing pipeline
-	int a, b;
+	int p, q;
 	__asm__("cpuid"
-			:"=a"(b)
-			:"0"(a)
+			:"=a"(q)
+			:"0"(p)
 			:"%ebx","%ecx","%edx");
 
 	//FLOPS
