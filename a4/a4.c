@@ -61,22 +61,22 @@ void MMM() {
 	}
 
 	//cleaning cache
-	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-	char *d = (char *)malloc(size);
-	for (int i = 0; i < 0xffff; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			d[j] = i*j;
-		}
-	}
+	// const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+	// char *d = (char *)malloc(size);
+	// for (int i = 0; i < 0xffff; i++)
+	// {
+	// 	for (int j = 0; j < size; j++)
+	// 	{
+	// 		d[j] = i*j;
+	// 	}
+	// }
 
 	//Flushing pipeline
-	int p, q;
-	__asm__("cpuid"
-			:"=a"(q)
-			:"0"(p)
-			:"%ebx","%ecx","%edx");
+	// int p, q;
+	// __asm__("cpuid"
+	// 		:"=a"(q)
+	// 		:"0"(p)
+	// 		:"%ebx","%ecx","%edx");
 
 	/*
 	//FLOPS
@@ -119,12 +119,12 @@ void MMM() {
 
 	PAPI_shutdown();
 
-	//Flushing pipeline
-	int x, y;
-	__asm__("cpuid"
-			:"=a"(y)
-			:"0"(x)
-			:"%ebx","%ecx","%edx");
+	// //Flushing pipeline
+	// int x, y;
+	// __asm__("cpuid"
+	// 		:"=a"(y)
+	// 		:"0"(x)
+	// 		:"%ebx","%ecx","%edx");
 
 	printf("Matrix size: %d\n", matrixSize);
 
