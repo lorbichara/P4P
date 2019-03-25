@@ -78,6 +78,14 @@ void MMM() {
 			:"0"(a)
 			:"%ebx","%ecx","%edx");
 
+	//FLOPS
+	float real_time, proc_time, mflops;
+	long long flpins;
+	int execTime;
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	//FLOPS
+
+	//L1
 	long long counters[3];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
@@ -87,6 +95,7 @@ void MMM() {
 
 	PAPI_library_init(PAPI_VER_CURRENT);
 	int w = PAPI_start_counters(PAPI_events, 3);
+	//L1
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -99,17 +108,24 @@ void MMM() {
 		}
 	}
 
+	//FLOPS
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
+	//FLOPS
+
+	//L1
 	PAPI_read_counters(counters, 2);
 	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 	printf("Flops: %lld\n", counters[2]);
+	//L1
 
 	PAPI_shutdown();
 
 	//Flushing pipeline
-	int a, b;
+	int x, y;
 	__asm__("cpuid"
-			:"=a"(b)
-			:"0"(a)
+			:"=a"(y)
+			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
 	printf("Matrix size: %d\n", matrixSize);
