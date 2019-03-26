@@ -81,14 +81,13 @@ void MMM()
 			:"%ebx","%ecx","%edx");
 
 	//PAPI measurements
-	long long counters[1];
+	long long counters[2];
 	int PAPI_events[] = {
-		//PAPI_L1_DCM,
-		//PAPI_L1_DCA,
-		PAPI_FP_OPS
+		PAPI_L1_DCM,
+		PAPI_L1_DCA,
 	};
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 1);
+	int w = PAPI_start_counters(PAPI_events, 3);
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -102,9 +101,8 @@ void MMM()
 	}
 
 	//PAPI measurements
-	PAPI_read_counters(counters, 1);
-	//printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
-	printf("FP_OPS: %.f\n", counters[0]);
+	PAPI_read_counters(counters, 2);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 	PAPI_shutdown();
 	
 	//CPUID to flush pipeline and serialize instructions
@@ -162,14 +160,13 @@ void MMMRegisterBlocking()
 			:"%ebx","%ecx","%edx");
 
 	//PAPI measurements
-	long long counters[3];
+	long long counters[2];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
 		PAPI_L1_DCA,
-		PAPI_FP_OPS
 	};
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 3);
+	int w = PAPI_start_counters(PAPI_events, 2);
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -216,8 +213,8 @@ void MMMRegisterBlocking()
 	}
 
 	//PAPI measurements
-	PAPI_read_counters(counters, 3);
-	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
+	PAPI_read_counters(counters, 2);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 	PAPI_shutdown();
 
 	//CPUID to flush pipeline and serialize instructions
