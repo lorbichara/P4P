@@ -184,6 +184,33 @@ void MMMRegisterBlocking()
 			}
 		}
 	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", B[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", C[i][j]);
+		}
+		printf("\n");
+	}
 }
 
 int main()
