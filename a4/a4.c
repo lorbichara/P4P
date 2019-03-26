@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <papi.h>
 #include <time.h>
-#include <intrin.h>
+#include <cpuid.h>
 
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
@@ -100,7 +100,10 @@ void MMM()
 	PAPI_library_init(PAPI_VER_CURRENT);
 	int w = PAPI_start_counters(PAPI_events, 3);
 
-	__cpuid()
+	asm __volatile__ (
+		" mfence \n"
+		" lfence \n"
+	);
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -113,7 +116,10 @@ void MMM()
 		}
 	}
 
-	__cpuid()
+	asm __volatile__ (
+		" mfence \n"
+		" lfence \n"
+	);
 
 	// //FLOPS
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
@@ -261,5 +267,5 @@ void MMMRegisterBlocking()
 
 int main()
 {
-	MMMRegisterBlocking();
+	MMM();
 }
