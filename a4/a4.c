@@ -43,7 +43,8 @@ void Free2DArray(void ** Array)
 }
 
 //function that takes 3 NxN matrices as input and performs matrix multiplication using ikj
-void MMM() {
+void MMM()
+{
 	int matrixSize;
 	scanf("%d", &matrixSize);
 
@@ -130,6 +131,68 @@ void MMM() {
 	Free2DArray((void**)c);
 }
 
-int main() {
-	MMM();
+void MMMRegisterBlocking()
+{
+	int NB; //matrix size NB = N
+	scanf("%d", &NB);
+	int MU = 5; //values assigned based on Yotov paper, multiples of NB
+	int NU = 1;
+
+	//create matrices of size NB
+	float **a = Allocate2DArray_Offloat(NB, NB);
+	float **b = Allocate2DArray_Offloat(NB, matrixSize);
+	float **c = Allocate2DArray_Offloat(NB, NB);
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			a[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			b[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+		}
+	}
+
+	//mini-kernel
+	register float registerA[NB][NB];
+	register float registerB[NB][NB];
+	register float registerC[NB][NB];
+	int countA = 0;
+	int countB = 0;
+	int countC = 0;
+	for(int j = 0; j < NB; j+=NU)
+	{
+		for(int i = 0; i < NB; i+=MU)
+		{
+			// register int i = 10; 
+			//load C[i..i+MU-1, j..j+NU-1] into registers
+			while(countC < MU-1)
+			{
+				registerC[i][j] = c[i+countC][j]; //j stays fixed because NU = 1.
+				countC++;
+			}
+			
+			for(int k = 0; k < NB; k++)
+			{
+				//micro-kernel
+				//load A[i..i+MU-1,k] into registers
+				while(countA < MU-1)
+				{
+					registerA[i][j] = a[i+countA][k];
+					countA++;
+				}
+				
+				//load B[k,j..j+NU-1] into registers
+				registerA[i][j] = a[k][j]; //j stays fixed because NU = 1.
+
+				//multiply A's and B's and add to C's
+				//store C[i..i+MU-1, j..j+NU-1]
+				c[i][j] += a[i][k] * b[k][j];
+			}
+		}
+	}
+}
+
+int main()
+{
+	MMMRegisterBlocking();
 }
