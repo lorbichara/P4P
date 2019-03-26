@@ -113,6 +113,33 @@ void MMM()
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", b[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", c[i][j]);
+		}
+		printf("\n");
+	}
+
 	//Free memory
 	Free2DArray((void**)a);
 	Free2DArray((void**)b);
@@ -153,7 +180,7 @@ void MMMRegisterBlocking()
 		}
 	}
 
-	//Flushing pipeline
+	//CPUID to flush pipeline and serialize instructions
 	int p, q;
 	__asm__("cpuid"
 			:"=a"(q)
@@ -219,44 +246,44 @@ void MMMRegisterBlocking()
 	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
 	PAPI_shutdown();
 
-	//Flushing pipeline
+	//CPUID to flush pipeline and serialize instructions
 	int x, y;
 	__asm__("cpuid"
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
-	// for(int i = 0; i < NB; i++)
-	// {
-	// 	for(int j = 0; j < NB; j++)
-	// 	{
-	// 		printf("%7.2f\t", A[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
 
-	// for(int i = 0; i < NB; i++)
-	// {
-	// 	for(int j = 0; j < NB; j++)
-	// 	{
-	// 		printf("%7.2f\t", B[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", B[i][j]);
+		}
+		printf("\n");
+	}
 
-	// for(int i = 0; i < NB; i++)
-	// {
-	// 	for(int j = 0; j < NB; j++)
-	// 	{
-	// 		printf("%7.2f\t", C[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", C[i][j]);
+		}
+		printf("\n");
+	}
 
 	//Free memory
-	Free2DArray((void**)a);
-	Free2DArray((void**)b);
-	Free2DArray((void**)c);
+	Free2DArray((void**)A);
+	Free2DArray((void**)B);
+	Free2DArray((void**)C);
 }
 
 int main()
