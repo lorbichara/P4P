@@ -84,10 +84,10 @@ void MMM()
 	long long counters[2];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
-		PAPI_L1_DCA,
+		PAPI_L1_DCA
 	};
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 3);
+	int w = PAPI_start_counters(PAPI_events, 2);
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -163,7 +163,7 @@ void MMMRegisterBlocking()
 	long long counters[2];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
-		PAPI_L1_DCA,
+		PAPI_L1_DCA
 	};
 	PAPI_library_init(PAPI_VER_CURRENT);
 	int w = PAPI_start_counters(PAPI_events, 2);
