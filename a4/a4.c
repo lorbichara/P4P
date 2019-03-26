@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <papi.h>
 #include <time.h>
-#include <cpuid.h>
+#include <intrin.h>
 
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
@@ -64,8 +64,6 @@ void MMM()
 		}
 	}
 
-	printf("hola1");
-
 	//cleaning cache
 	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
 	char *d = (char *)malloc(size);
@@ -76,8 +74,6 @@ void MMM()
 			d[j] = i*j;
 		}
 	}
-	printf("hola2");
-
 	
 	//Flushing pipeline
 	int p, q;
@@ -85,7 +81,6 @@ void MMM()
 			:"=a"(q)
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
-	printf("hola3");
 
 	//FLOPS
 	// float real_time, proc_time, mflops;
@@ -94,23 +89,15 @@ void MMM()
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	//L1
-	//long long counters[3];
-	long long counters[2];
+	long long counters[3];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
 		PAPI_L1_DCA,
-	//	PAPI_FP_OPS
+		PAPI_FP_OPS
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	//int w = PAPI_start_counters(PAPI_events, 3);
-	int w = PAPI_start_counters(PAPI_events, 2);
-
-	asm __volatile__ (
-		" mfence \n"
-		" lfence \n"
-	);
-	printf("hola4");
+	int w = PAPI_start_counters(PAPI_events, 3);
 
 	for(int i = 0; i < matrixSize; i++)
 	{
@@ -123,18 +110,13 @@ void MMM()
 		}
 	}
 
-	asm __volatile__ (
-		" mfence \n"
-		" lfence \n"
-	);
-
 	// //FLOPS
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 	// printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
 
 	//L1
 	PAPI_read_counters(counters, 3);
-	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
 
 	PAPI_shutdown();
 	
@@ -274,5 +256,5 @@ void MMMRegisterBlocking()
 
 int main()
 {
-	MMM();
+	MMMRegisterBlocking();
 }
