@@ -143,6 +143,8 @@ void MMMRegisterBlocking()
 	float **B = Allocate2DArray_Offloat(NB, NB);
 	float **C = Allocate2DArray_Offloat(NB, NB);
 
+	srand(time(0));
+	
 	for(int i = 0; i < NB; i++)
 	{
 		for(int j = 0; j < NB; j++)
