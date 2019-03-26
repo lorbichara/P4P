@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <papi.h>
 #include <time.h>
+#include <intrin.h>
 
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
@@ -52,6 +53,8 @@ void MMM()
 	float **b = Allocate2DArray_Offloat(matrixSize, matrixSize);
 	float **c = Allocate2DArray_Offloat(matrixSize, matrixSize);
 
+	srand(time(0));
+
 	for(int i = 0; i < matrixSize; i++)
 	{
 		for(int j = 0; j < matrixSize; j++)
@@ -81,21 +84,24 @@ void MMM()
 			:"%ebx","%ecx","%edx");
 
 	//FLOPS
-	float real_time, proc_time, mflops;
-	long long flpins;
-	int execTime;
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-/*
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
 	//L1
-	long long counters[2];
+	long long counters[3];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
 		PAPI_L1_DCA,
+		PAPI_FP_OPS
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 2);
-*/
+	int w = PAPI_start_counters(PAPI_events, 3);
+
+	__cpuid()
+
 	for(int i = 0; i < matrixSize; i++)
 	{
 		for(int k = 0; k < matrixSize; k++)
@@ -107,14 +113,16 @@ void MMM()
 		}
 	}
 
-	//FLOPS
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
-/*
+	__cpuid()
+
+	// //FLOPS
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
+
 	//L1
-	PAPI_read_counters(counters, 2);
-	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
-*/
+	PAPI_read_counters(counters, 3);
+	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
+
 	PAPI_shutdown();
 	
 	//Flushing pipeline
@@ -144,7 +152,7 @@ void MMMRegisterBlocking()
 	float **C = Allocate2DArray_Offloat(NB, NB);
 
 	srand(time(0));
-	
+
 	for(int i = 0; i < NB; i++)
 	{
 		for(int j = 0; j < NB; j++)
@@ -153,6 +161,24 @@ void MMMRegisterBlocking()
 			B[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
 		}
 	}
+
+	//cleaning cache
+	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+	char *d = (char *)malloc(size);
+	for (int i = 0; i < 0xffff; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			d[j] = i*j;
+		}
+	}
+
+	//Flushing pipeline
+	int p, q;
+	__asm__("cpuid"
+			:"=a"(q)
+			:"0"(p)
+			:"%ebx","%ecx","%edx");
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -197,6 +223,13 @@ void MMMRegisterBlocking()
 			}
 		}
 	}
+
+	//Flushing pipeline
+	int x, y;
+	__asm__("cpuid"
+			:"=a"(y)
+			:"0"(x)
+			:"%ebx","%ecx","%edx");
 
 	for(int i = 0; i < NB; i++)
 	{
