@@ -1,7 +1,6 @@
 // Lorraine Bichara - lb34995
 // CS 377P
 // march 18, 2019
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <papi.h>
@@ -73,28 +72,21 @@ void MMM()
 			d[j] = i*j;
 		}
 	}
-	
-	//Flushing pipeline
+
+	//CPUID to flush pipeline and serialize instructions
 	int p, q;
 	__asm__("cpuid"
 			:"=a"(q)
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
 
-	//FLOPS
-	// float real_time, proc_time, mflops;
-	// long long flpins;
-	// int execTime;
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-
-	//L1
+	//PAPI measurements
 	long long counters[3];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
 		PAPI_L1_DCA,
 		PAPI_FP_OPS
 	};
-
 	PAPI_library_init(PAPI_VER_CURRENT);
 	int w = PAPI_start_counters(PAPI_events, 3);
 
@@ -109,25 +101,19 @@ void MMM()
 		}
 	}
 
-	// //FLOPS
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	// printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
-
-	//L1
+	//PAPI measurements
 	PAPI_read_counters(counters, 3);
 	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
-
 	PAPI_shutdown();
 	
-	//Flushing pipeline
+	//CPUID to flush pipeline and serialize instructions
 	int x, y;
 	__asm__("cpuid"
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
-	printf("Matrix size: %d\n", matrixSize);
-
+	//Free memory
 	Free2DArray((void**)a);
 	Free2DArray((void**)b);
 	Free2DArray((void**)c);
@@ -174,6 +160,16 @@ void MMMRegisterBlocking()
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
 
+	//PAPI measurements
+	long long counters[3];
+	int PAPI_events[] = {
+		PAPI_L1_DCM,
+		PAPI_L1_DCA,
+		PAPI_FP_OPS
+	};
+	PAPI_library_init(PAPI_VER_CURRENT);
+	int w = PAPI_start_counters(PAPI_events, 3);
+
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
 	{
@@ -218,6 +214,11 @@ void MMMRegisterBlocking()
 		}
 	}
 
+	//PAPI measurements
+	PAPI_read_counters(counters, 3);
+	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
+	PAPI_shutdown();
+
 	//Flushing pipeline
 	int x, y;
 	__asm__("cpuid"
@@ -225,32 +226,37 @@ void MMMRegisterBlocking()
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", A[i][j]);
-		}
-		printf("\n");
-	}
+	// for(int i = 0; i < NB; i++)
+	// {
+	// 	for(int j = 0; j < NB; j++)
+	// 	{
+	// 		printf("%7.2f\t", A[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
 
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", B[i][j]);
-		}
-		printf("\n");
-	}
+	// for(int i = 0; i < NB; i++)
+	// {
+	// 	for(int j = 0; j < NB; j++)
+	// 	{
+	// 		printf("%7.2f\t", B[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
 
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", C[i][j]);
-		}
-		printf("\n");
-	}
+	// for(int i = 0; i < NB; i++)
+	// {
+	// 	for(int j = 0; j < NB; j++)
+	// 	{
+	// 		printf("%7.2f\t", C[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
+
+	//Free memory
+	Free2DArray((void**)a);
+	Free2DArray((void**)b);
+	Free2DArray((void**)c);
 }
 
 int main()
