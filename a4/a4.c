@@ -64,6 +64,8 @@ void MMM()
 		}
 	}
 
+	printf("hola1");
+
 	//cleaning cache
 	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
 	char *d = (char *)malloc(size);
@@ -74,6 +76,7 @@ void MMM()
 			d[j] = i*j;
 		}
 	}
+	printf("hola2");
 
 	
 	//Flushing pipeline
@@ -82,6 +85,7 @@ void MMM()
 			:"=a"(q)
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
+	printf("hola3");
 
 	//FLOPS
 	// float real_time, proc_time, mflops;
@@ -101,11 +105,12 @@ void MMM()
 	PAPI_library_init(PAPI_VER_CURRENT);
 	//int w = PAPI_start_counters(PAPI_events, 3);
 	int w = PAPI_start_counters(PAPI_events, 2);
-	
+
 	asm __volatile__ (
 		" mfence \n"
 		" lfence \n"
 	);
+	printf("hola4");
 
 	for(int i = 0; i < matrixSize; i++)
 	{
