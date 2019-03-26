@@ -312,24 +312,24 @@ void MMMVectorizedRegisterBlocking()
 		{
 			//load C[i..i+MU-1, j..j+NU-1] into registers
 			//j stays fixed because NU = 1
-			__m128 c1 = __m_set1_ps(C[i][j]);
-			__m128 c2 = __m_set1_ps(C[i+1][j]);
-			__m128 c3 = __m_set1_ps(C[i+2][j]);
-			__m128 c4 = __m_set1_ps(C[i+3][j]);
-			__m128 c5 = __m_set1_ps(C[i+4][j]);
+			__m128 c1 = _mm_set1_ps(C[i][j]);
+			__m128 c2 = _mm_set1_ps(C[i+1][j]);
+			__m128 c3 = _mm_set1_ps(C[i+2][j]);
+			__m128 c4 = _mm_set1_ps(C[i+3][j]);
+			__m128 c5 = _mm_set1_ps(C[i+4][j]);
 
 			for(int k = 0; k < NB; k++)
 			{
 				//micro-kernel
 				//load A[i..i+MU-1,k] into registers
-				__m128 a1 = __m_set1_ps(A[i][k]);
-				__m128 a2 = __m_set1_ps(A[i+1][k]);
-				__m128 a3 = __m_set1_ps(A[i+2][k]);
-				__m128 a4 = __m_set1_ps(A[i+3][k]);
-				__m128 a5 = __m_set1_ps(A[i+4][k]);
+				__m128 a1 = _mm_set1_ps(A[i][k]);
+				__m128 a2 = _mm_set1_ps(A[i+1][k]);
+				__m128 a3 = _mm_set1_ps(A[i+2][k]);
+				__m128 a4 = _mm_set1_ps(A[i+3][k]);
+				__m128 a5 = _mm_set1_ps(A[i+4][k]);
 
 				//load B[k,j..j+NU-1] into registers
-				__m128 b1 = __m_set1_ps(B[k][j]);
+				__m128 b1 = _mm_set1_ps(B[k][j]);
 
 				//multiply A's and B's and add to C's
 				//store C[i..i+MU-1, j..j+NU-1]
@@ -346,11 +346,11 @@ void MMMVectorizedRegisterBlocking()
 				c4 = _mm_add_ps(c4, c44);
 				c5 = _mm_add_ps(c5, c55);
 
-				_mm_storel_pi(C[i][j], c1);
-				_mm_storel_pi(C[i+1][j], c2);
-				_mm_storel_pi(C[i+2][j], c3);
-				_mm_storel_pi(C[i+3][j], c4);
-				_mm_storel_pi(C[i+4][j], c5);
+				_mm_storel_pd(C[i][j], c1);
+				_mm_storel_pd(C[i+1][j], c2);
+				_mm_storel_pd(C[i+2][j], c3);
+				_mm_storel_pd(C[i+3][j], c4);
+				_mm_storel_pd(C[i+4][j], c5);
 			}
 		}
 	}
