@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <papi.h>
 #include <time.h>
-#include <intrin.h>
 
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
@@ -256,5 +255,5 @@ void MMMRegisterBlocking()
 
 int main()
 {
-	MMMRegisterBlocking();
+	MMM();
 }
