@@ -113,33 +113,6 @@ void MMM()
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", a[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", b[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", c[i][j]);
-		}
-		printf("\n");
-	}
-
 	//Free memory
 	Free2DArray((void**)a);
 	Free2DArray((void**)b);
@@ -252,33 +225,6 @@ void MMMRegisterBlocking()
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", A[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", B[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", C[i][j]);
-		}
-		printf("\n");
-	}
 
 	//Free memory
 	Free2DArray((void**)A);
