@@ -139,54 +139,48 @@ void MMMRegisterBlocking()
 	int NU = 1;
 
 	//create matrices of size NB
-	float **a = Allocate2DArray_Offloat(NB, NB);
-	float **b = Allocate2DArray_Offloat(NB, matrixSize);
-	float **c = Allocate2DArray_Offloat(NB, NB);
+	float **A = Allocate2DArray_Offloat(NB, NB);
+	float **B = Allocate2DArray_Offloat(NB, NB);
+	float **C = Allocate2DArray_Offloat(NB, NB);
 
 	for(int i = 0; i < NB; i++)
 	{
 		for(int j = 0; j < NB; j++)
 		{
-			a[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
-			b[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			A[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			B[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
 		}
 	}
 
 	//mini-kernel
-	register float registerA[NB][NB];
-	register float registerB[NB][NB];
-	register float registerC[NB][NB];
-	int countA = 0;
-	int countB = 0;
-	int countC = 0;
 	for(int j = 0; j < NB; j+=NU)
 	{
 		for(int i = 0; i < NB; i+=MU)
 		{
-			// register int i = 10; 
 			//load C[i..i+MU-1, j..j+NU-1] into registers
-			while(countC < MU-1)
-			{
-				registerC[i][j] = c[i+countC][j]; //j stays fixed because NU = 1.
-				countC++;
-			}
-			
+			//j stays fixed because NU = 1
+			register float c1 = C[i][j];
+			register float c2 = C[i+1][j];
+			register float c3 = C[i+2][j];
+			register float c4 = C[i+3][j];
+			register float c5 = C[i+4][j];
+
 			for(int k = 0; k < NB; k++)
 			{
 				//micro-kernel
 				//load A[i..i+MU-1,k] into registers
-				while(countA < MU-1)
-				{
-					registerA[i][j] = a[i+countA][k];
-					countA++;
-				}
-				
+				register float a1 = A[i][k];
+				register float a2 = A[i+1][k];
+				register float a3 = A[i+2][k];
+				register float a4 = A[i+3][k];
+				register float a5 = A[i+4][k];
+
 				//load B[k,j..j+NU-1] into registers
-				registerA[i][j] = a[k][j]; //j stays fixed because NU = 1.
+				register float b1 = B[k][j]; //NU = 1 so we only load B[k][j]
 
 				//multiply A's and B's and add to C's
 				//store C[i..i+MU-1, j..j+NU-1]
-				c[i][j] += a[i][k] * b[k][j];
+				C[i][j] += A[i][k] * B[k][j];
 			}
 		}
 	}
