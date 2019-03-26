@@ -90,16 +90,18 @@ void MMM()
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	//L1
-	long long counters[3];
+	//long long counters[3];
+	long long counters[2];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
 		PAPI_L1_DCA,
-		PAPI_FP_OPS
+	//	PAPI_FP_OPS
 	};
 
 	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 3);
-
+	//int w = PAPI_start_counters(PAPI_events, 3);
+	int w = PAPI_start_counters(PAPI_events, 2);
+	
 	asm __volatile__ (
 		" mfence \n"
 		" lfence \n"
@@ -127,7 +129,7 @@ void MMM()
 
 	//L1
 	PAPI_read_counters(counters, 3);
-	printf("%lld L1 cache misses (%.3lf%% misses)\nFP_OPS: %.f\n", counters[0],(double)counters[0] / (double)counters[1], counters[2]);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 
 	PAPI_shutdown();
 	
