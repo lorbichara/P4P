@@ -180,7 +180,15 @@ void MMMRegisterBlocking()
 
 				//multiply A's and B's and add to C's
 				//store C[i..i+MU-1, j..j+NU-1]
-				C[i][j] += A[i][k] * B[k][j];
+				//C[i][j] += A[i][k] * B[k][j];
+				c1 = a1 * b1;
+				c2 = a2 * b1;
+				c3 = a3 * b1;
+				c4 = a4 * b1;
+				c5 = a5 * b1;
+
+				C[i][j] = c1 + c2 + c3 + c4 + c5;
+
 			}
 		}
 	}
