@@ -292,7 +292,9 @@ void MMMVectorizedRegisterBlocking(int NB)
 		for(int i = 0; i < NB; i+=MU)
 		{
 			//load C[i..i+MU-1, j..j+NU-1] into registers
-			__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
+			float help[4] = {C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]}
+			__m128 c = _mm_load_ps(help);
+			//__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
 
 			for(int k = 0; k < NB; k++)
 			{
