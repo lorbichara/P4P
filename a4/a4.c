@@ -7,29 +7,10 @@
 #include <time.h>
 #include <immintrin.h>
 
-void start_PAPI(int EventSet)
-{
-	int retval = PAPI_start( EventSet );
-	if ( retval != PAPI_OK)
-	{
-		PAPI_perror("PAPI_start");
-		exit(-1);
-	}
-	return;
-}
-
-void stop_PAPI(int EventSet, long long values[])
-{
-	int retval = PAPI_stop( EventSet, values );
-	if ( retval != PAPI_OK)
-	{
-		PAPI_perror("PAPI_start");
-		exit(-1);
-	}
-	printf("PAPI_FP_OPS %lld\n", values[0]);
-	printf("PAPI_VEC_SP %lld\n", values[1]);
-	return;
-}
+#define MX 1024
+#define NITER 20
+#define MEGA 1000000
+#define TOT_FLOPS (2*MX*MX*NITER)
 
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
@@ -192,44 +173,10 @@ void MMMRegisterBlocking(int NB)
 	// PAPI_library_init(PAPI_VER_CURRENT);
 	// int w = PAPI_start_counters(PAPI_events, 2);
 
-	// float real_time, proc_time, mflops;
-	// long long flpins;
-	// int execTime;
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	int retval, l;
-	int EventSet = PAPI_NULL, count = 0, err_count = 0;
-	long long values[2];
-	PAPI_event_info_t info;
-
-	retval = PAPI_library_init( PAPI_VER_CURRENT );
-        if ( retval != PAPI_VER_CURRENT )
-	{
-                PAPI_perror("PAPI_library_init");
-		exit(-1);
-	}
-
-        retval = PAPI_create_eventset( &EventSet );
-        if ( retval != PAPI_OK )
-	{
-                PAPI_perror("PAPI_create_eventset");
-		exit(-1);
-	}
-
-        retval = PAPI_add_event( EventSet, PAPI_FP_OPS); 
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_add_event" );
-		exit(-1);
-	}
-
-        retval = PAPI_add_event( EventSet, PAPI_VEC_SP);
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_add_event" );
-		exit(-1);
-	}
-
-	start_PAPI(EventSet);
+	float real_time, proc_time, mflops;
+	long long flpins;
+	int execTime;
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -271,37 +218,14 @@ void MMMRegisterBlocking(int NB)
 		}
 	}
 
-	stop_PAPI(EventSet, values);
-
-	 retval = PAPI_remove_event( EventSet, PAPI_FP_OPS);
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_remove_event" );
-		exit(-1);
-	}
-
-        retval = PAPI_remove_event( EventSet, PAPI_VEC_SP);
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_remove_event" );
-		exit(-1);
-	}
-
-        retval = PAPI_destroy_eventset( &EventSet );
-        if ( retval != PAPI_OK )
-	{
-                PAPI_perror("PAPI_destroy_eventset");
-		exit(-1);
-	}
-
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
 	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 	// PAPI_shutdown();
 
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	// printf("Mflops: %f\n", mflops);
-	// PAPI_shutdown();
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	printf("Mflops: %f\n", mflops);
+	PAPI_shutdown();
 
 	//CPUID to flush pipeline and serialize instructions
 	int x, y;
@@ -314,6 +238,11 @@ void MMMRegisterBlocking(int NB)
 	Free2DArray((void**)A);
 	Free2DArray((void**)B);
 	Free2DArray((void**)C);
+}
+
+float gettime() 
+{
+	return((float)PAPI_get_virt_usec()*1000000.0);
 }
 
 //Vectorized register blocking
@@ -367,41 +296,21 @@ void MMMVectorizedRegisterBlocking(int NB)
 	// int execTime;
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-	//AQUI
-	int retval, l;
-	int EventSet = PAPI_NULL, count = 0, err_count = 0;
-	long long values[2];
-	PAPI_event_info_t info;
+	float t0, t1;
+	int iter, i, j;
+	int events[2] = {PAPI_L1_DCM, PAPI_FP_OPS }, ret;
+	long_long values[2];
 
-	retval = PAPI_library_init( PAPI_VER_CURRENT );
-        if ( retval != PAPI_VER_CURRENT )
-	{
-                PAPI_perror("PAPI_library_init");
-		exit(-1);
+	if (PAPI_num_counters() < 2) {
+	   fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
+	   exit(1);
 	}
 
-        retval = PAPI_create_eventset( &EventSet );
-        if ( retval != PAPI_OK )
-	{
-                PAPI_perror("PAPI_create_eventset");
-		exit(-1);
+	t0 = gettime();
+	if ((ret = PAPI_start_counters(events, 2)) != PAPI_OK) {
+	   fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
+	   exit(1);
 	}
-
-        retval = PAPI_add_event( EventSet, PAPI_FP_OPS); 
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_add_event" );
-		exit(-1);
-	}
-
-        retval = PAPI_add_event( EventSet, PAPI_VEC_SP);
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_add_event" );
-		exit(-1);
-	}
-
-	start_PAPI(EventSet);
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -435,28 +344,16 @@ void MMMVectorizedRegisterBlocking(int NB)
 		}
 	}
 
-	stop_PAPI(EventSet, values);
-
-	 retval = PAPI_remove_event( EventSet, PAPI_FP_OPS);
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_remove_event" );
-		exit(-1);
+	if ((ret = PAPI_read_counters(values, 2)) != PAPI_OK) {
+	  fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+	  exit(1);
 	}
+	t1 = gettime();
 
-        retval = PAPI_remove_event( EventSet, PAPI_VEC_SP);
-        if ( retval != PAPI_OK ) 
-	{
-                PAPI_perror( "PAPI_remove_event" );
-		exit(-1);
-	}
-
-        retval = PAPI_destroy_eventset( &EventSet );
-        if ( retval != PAPI_OK )
-	{
-                PAPI_perror("PAPI_destroy_eventset");
-		exit(-1);
-	}
+	printf("Total software flops = %f\n",(float)TOT_FLOPS);
+	printf("Total hardware flops = %lld\n",(float)values[1]);
+	printf("MFlop/s = %f\n", (float)(TOT_FLOPS/MEGA)/(t1-t0));
+	printf("L2 data cache misses is %lld\n", values[0]);
 
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
@@ -487,9 +384,9 @@ int main()
 
 	// printf("Naive MMM: \n");
 	// MMM(matrixSize);
-	printf("Register blocking MMM: \n");
-	MMMRegisterBlocking(matrixSize);
+	//printf("Register blocking MMM: \n");
+	//MMMRegisterBlocking(matrixSize);
 
-	//printf("Vectorized Register Blocking: \n");
-	//MMMVectorizedRegisterBlocking(matrixSize);
+	printf("Vectorized Register Blocking: \n");
+	MMMVectorizedRegisterBlocking(matrixSize);
 }
