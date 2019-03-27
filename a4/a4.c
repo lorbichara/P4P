@@ -12,6 +12,11 @@
 #define MEGA 1000000
 #define TOT_FLOPS (2*MX*MX*NITER)
 
+float gettime() 
+{
+	return((float)PAPI_get_virt_usec()*1000000.0);
+}
+
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
 {
@@ -173,10 +178,26 @@ void MMMRegisterBlocking(int NB)
 	// PAPI_library_init(PAPI_VER_CURRENT);
 	// int w = PAPI_start_counters(PAPI_events, 2);
 
-	float real_time, proc_time, mflops;
-	long long flpins;
-	int execTime;
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
+		float t0, t1;
+	int iter, i, j;
+	int events[2] = {PAPI_L1_DCM, PAPI_FP_OPS }, ret;
+	long_long values[2];
+
+	if (PAPI_num_counters() < 2) {
+	   fprintf(stderr, "No hardware counters here, or PAPI not supported.\n");
+	   exit(1);
+	}
+
+	t0 = gettime();
+	if ((ret = PAPI_start_counters(events, 2)) != PAPI_OK) {
+	   fprintf(stderr, "PAPI failed to start counters: %s\n", PAPI_strerror(ret));
+	   exit(1);
+	}
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -218,6 +239,17 @@ void MMMRegisterBlocking(int NB)
 		}
 	}
 
+		if ((ret = PAPI_read_counters(values, 2)) != PAPI_OK) {
+	  fprintf(stderr, "PAPI failed to read counters: %s\n", PAPI_strerror(ret));
+	  exit(1);
+	}
+	t1 = gettime();
+
+	printf("Total software flops = %f\n",(float)TOT_FLOPS);
+	printf("Total hardware flops = %lld\n",(float)values[1]);
+	printf("MFlop/s = %f\n", (float)(TOT_FLOPS/MEGA)/(t1-t0));
+	printf("L2 data cache misses is %lld\n", values[0]);
+
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
 	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
@@ -238,11 +270,6 @@ void MMMRegisterBlocking(int NB)
 	Free2DArray((void**)A);
 	Free2DArray((void**)B);
 	Free2DArray((void**)C);
-}
-
-float gettime() 
-{
-	return((float)PAPI_get_virt_usec()*1000000.0);
 }
 
 //Vectorized register blocking
@@ -384,9 +411,9 @@ int main()
 
 	// printf("Naive MMM: \n");
 	// MMM(matrixSize);
-	//printf("Register blocking MMM: \n");
-	//MMMRegisterBlocking(matrixSize);
+	printf("Register blocking MMM: \n");
+	MMMRegisterBlocking(matrixSize);
 
-	printf("Vectorized Register Blocking: \n");
-	MMMVectorizedRegisterBlocking(matrixSize);
+	//printf("Vectorized Register Blocking: \n");
+	//MMMVectorizedRegisterBlocking(matrixSize);
 }
