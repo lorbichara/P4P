@@ -62,15 +62,12 @@ void MMM(int matrixSize)
 	}
 
 	// //cleaning cache
-	// const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-	// char *d = (char *)malloc(size);
-	// for (int i = 0; i < 0xffff; i++)
-	// {
-	// 	for (int j = 0; j < size; j++)
-	// 	{
-	// 		d[j] = i*j;
-	// 	}
-	// }
+	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
+	long *p = new long[bigger_than_cachesize];
+	for(int i = 0; i < bigger_than_cachesize; i++)
+	{
+		p[i] = 0;
+	}
 
 	//CPUID to flush pipeline and serialize instructions
 	int p, q;
@@ -175,15 +172,12 @@ void MMMRegisterBlocking(int NB)
 	}
 
 	// //cleaning cache
-	// const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-	// char *d = (char *)malloc(size);
-	// for (int i = 0; i < 0xffff; i++)
-	// {
-	// 	for (int j = 0; j < size; j++)
-	// 	{
-	// 		d[j] = i*j;
-	// 	}
-	// }
+	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
+	long *p = new long[bigger_than_cachesize];
+	for(int i = 0; i < bigger_than_cachesize; i++)
+	{
+		p[i] = 0;
+	}
 
 	//CPUID to flush pipeline and serialize instructions
 	int p, q;
