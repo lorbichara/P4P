@@ -192,10 +192,44 @@ void MMMRegisterBlocking(int NB)
 	// PAPI_library_init(PAPI_VER_CURRENT);
 	// int w = PAPI_start_counters(PAPI_events, 2);
 
-	float real_time, proc_time, mflops;
-	long long flpins;
-	int execTime;
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	int retval, l;
+	int EventSet = PAPI_NULL, count = 0, err_count = 0;
+	long long values[2];
+	PAPI_event_info_t info;
+
+	retval = PAPI_library_init( PAPI_VER_CURRENT );
+        if ( retval != PAPI_VER_CURRENT )
+	{
+                PAPI_perror("PAPI_library_init");
+		exit(-1);
+	}
+
+        retval = PAPI_create_eventset( &EventSet );
+        if ( retval != PAPI_OK )
+	{
+                PAPI_perror("PAPI_create_eventset");
+		exit(-1);
+	}
+
+        retval = PAPI_add_event( EventSet, PAPI_FP_OPS); 
+        if ( retval != PAPI_OK ) 
+	{
+                PAPI_perror( "PAPI_add_event" );
+		exit(-1);
+	}
+
+        retval = PAPI_add_event( EventSet, PAPI_VEC_SP);
+        if ( retval != PAPI_OK ) 
+	{
+                PAPI_perror( "PAPI_add_event" );
+		exit(-1);
+	}
+
+	start_PAPI(EventSet);
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -237,14 +271,37 @@ void MMMRegisterBlocking(int NB)
 		}
 	}
 
+	stop_PAPI(EventSet, values);
+
+	 retval = PAPI_remove_event( EventSet, PAPI_FP_OPS);
+        if ( retval != PAPI_OK ) 
+	{
+                PAPI_perror( "PAPI_remove_event" );
+		exit(-1);
+	}
+
+        retval = PAPI_remove_event( EventSet, PAPI_VEC_SP);
+        if ( retval != PAPI_OK ) 
+	{
+                PAPI_perror( "PAPI_remove_event" );
+		exit(-1);
+	}
+
+        retval = PAPI_destroy_eventset( &EventSet );
+        if ( retval != PAPI_OK )
+	{
+                PAPI_perror("PAPI_destroy_eventset");
+		exit(-1);
+	}
+
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
 	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 	// PAPI_shutdown();
 
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	printf("Mflops: %f\n", mflops);
-	PAPI_shutdown();
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// printf("Mflops: %f\n", mflops);
+	// PAPI_shutdown();
 
 	//CPUID to flush pipeline and serialize instructions
 	int x, y;
