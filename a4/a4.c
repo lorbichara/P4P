@@ -272,6 +272,19 @@ void MMMVectorizedRegisterBlocking(int NB)
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
 
+	int retval, quiet;
+	int events[1];
+   long long counts[1],high=0,low=0,total=0,average=0;
+   double error;
+	long long expected;
+
+	retval = PAPI_library_init(PAPI_VER_CURRENT);
+	events[0]=PAPI_FP_OPS;
+
+	PAPI_start_counters(events,1);
+
+
+
 	//PAPI measurements
 	// long long counters[2];
 	// int PAPI_events[] = {
@@ -280,15 +293,6 @@ void MMMVectorizedRegisterBlocking(int NB)
 	// };
 	// PAPI_library_init(PAPI_VER_CURRENT);
 	// int w = PAPI_start_counters(PAPI_events, 2);
-	long long counters[2];
-	int PAPI_events[] = {PAPI_FP_OPS, PAPI_TOT_CYC};
-	
-
-	PAPI_library_init(PAPI_VER_CURRENT);
-	//retval = PAPI_CREATE_eventset(&EventSet);
-	//retval = PAPI_add_events(EventSet, Events, 2);
-
-	int w = PAPI_start_counters(PAPI_events, 2);
 
 	// float real_time, proc_time, mflops;
 	// long long flpins;
@@ -341,9 +345,17 @@ void MMMVectorizedRegisterBlocking(int NB)
 		}
 	}
 
-	PAPI_read_counters(counters, 2);
-	printf("Hola: %f\n", counters[1]);
-	PAPI_shutdown();
+	PAPI_stop_counters(counts,1);
+	if (counts[0]>high) high=counts[0];
+    	if ((low==0) || (counts[0]<low)) low=counts[0];
+	total+=counts[0];
+
+	printf("Counted an average of %lld FP_OPS during sleep\n\n",
+total);
+
+	// PAPI_read_counters(counters, 2);
+	// printf("Hola: %f\n", counters[1]);
+	// PAPI_shutdown();
 
 	// if ((retval = PAPI_flops(&real_time, &proc_time, &flpops, &mflops))
  //            < PAPI_OK) {
