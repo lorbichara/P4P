@@ -61,16 +61,16 @@ void MMM(int matrixSize)
 		}
 	}
 
-	//cleaning cache
-	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-	char *d = (char *)malloc(size);
-	for (int i = 0; i < 0xffff; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			d[j] = i*j;
-		}
-	}
+	// //cleaning cache
+	// const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+	// char *d = (char *)malloc(size);
+	// for (int i = 0; i < 0xffff; i++)
+	// {
+	// 	for (int j = 0; j < size; j++)
+	// 	{
+	// 		d[j] = i*j;
+	// 	}
+	// }
 
 	//CPUID to flush pipeline and serialize instructions
 	int p, q;
@@ -174,16 +174,16 @@ void MMMRegisterBlocking(int NB)
 		}
 	}
 
-	//cleaning cache
-	const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
-	char *d = (char *)malloc(size);
-	for (int i = 0; i < 0xffff; i++)
-	{
-		for (int j = 0; j < size; j++)
-		{
-			d[j] = i*j;
-		}
-	}
+	// //cleaning cache
+	// const int size = 20*1024*1024; // Allocate 20M. Set much larger then L2
+	// char *d = (char *)malloc(size);
+	// for (int i = 0; i < 0xffff; i++)
+	// {
+	// 	for (int j = 0; j < size; j++)
+	// 	{
+	// 		d[j] = i*j;
+	// 	}
+	// }
 
 	//CPUID to flush pipeline and serialize instructions
 	int p, q;
@@ -457,6 +457,6 @@ int main()
 
 	printf("Naive MMM: \n");
 	MMM(matrixSize);
-	// printf("Register blocking MMM: \n");
-	// MMMRegisterBlocking(matrixSize);
+	printf("Register blocking MMM: \n");
+	MMMRegisterBlocking(matrixSize);
 }
