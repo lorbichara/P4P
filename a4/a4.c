@@ -160,18 +160,18 @@ void MMMRegisterBlocking(int NB)
 			:"%ebx","%ecx","%edx");
 
 	//PAPI measurements
-	long long counters[2];
-	int PAPI_events[] = {
-		PAPI_L1_DCM,
-		PAPI_L1_DCA
-	};
-	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 2);
+	// long long counters[2];
+	// int PAPI_events[] = {
+	// 	PAPI_L1_DCM,
+	// 	PAPI_L1_DCA
+	// };
+	// PAPI_library_init(PAPI_VER_CURRENT);
+	// int w = PAPI_start_counters(PAPI_events, 2);
 
-	// float real_time, proc_time, mflops;
-	// long long flpins;
-	// int execTime;
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	float real_time, proc_time, mflops;
+	long long flpins;
+	int execTime;
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -214,12 +214,12 @@ void MMMRegisterBlocking(int NB)
 	}
 
 	//PAPI measurements
-	PAPI_read_counters(counters, 2);
-	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
-	PAPI_shutdown();
+	// PAPI_read_counters(counters, 2);
+	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+	// PAPI_shutdown();
 
-	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	// printf("Mflops: %f\n", mflops);
+	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	printf("Mflops: %f\n", mflops);
 	PAPI_shutdown();
 
 	//CPUID to flush pipeline and serialize instructions
@@ -346,9 +346,9 @@ int main()
 
 	// printf("Naive MMM: \n");
 	// MMM(matrixSize);
-	// printf("Register blocking MMM: \n");
-	// MMMRegisterBlocking(matrixSize);
+	printf("Register blocking MMM: \n");
+	MMMRegisterBlocking(matrixSize);
 
-	printf("Vectorized Register Blocking: \n");
-	MMMVectorizedRegisterBlocking(matrixSize);
+	//printf("Vectorized Register Blocking: \n");
+	//MMMVectorizedRegisterBlocking(matrixSize);
 }
