@@ -292,7 +292,6 @@ void MMMVectorizedRegisterBlocking(int NB)
 		for(int i = 0; i < NB; i+=MU)
 		{
 			//load C[i..i+MU-1, j..j+NU-1] into registers
-			//j stays fixed because NU = 1
 			__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
 
 			for(int k = 0; k < NB; k++)
@@ -306,13 +305,11 @@ void MMMVectorizedRegisterBlocking(int NB)
 
 				//multiply A's and B's and add to C's
 				//store C[i..i+MU-1, j..j+NU-1]
-				//C[i][j] += A[i][k] * B[k][j];
 				__m128 d = _mm_mul_ps(a, b);
-
 				c = _mm_add_ps(c, d);
-				
 				float temp[4];
 				_mm_store_ps(&temp, c);
+
 				C[i][j] = temp[3];
 				C[i+1][j] = temp[2];
 				C[i+2][j] = temp[1];
@@ -336,33 +333,6 @@ void MMMVectorizedRegisterBlocking(int NB)
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", A[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", B[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", C[i][j]);
-		}
-		printf("\n");
-	}
 
 	//Free memory
 	Free2DArray((void**)A);
