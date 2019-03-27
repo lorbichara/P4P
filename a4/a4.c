@@ -321,6 +321,7 @@ void MMMVectorizedRegisterBlocking(int NB)
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
 	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+	// PAPI_shutdown();
 
 	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 	printf("Mflops: %f\n", mflops);
