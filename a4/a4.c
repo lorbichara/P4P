@@ -63,7 +63,7 @@ void MMM(int matrixSize)
 
 	// //cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
-	long *p = new long[bigger_than_cachesize];
+	int *p = (int *)malloc(bigger_than_cachesize);
 	for(int i = 0; i < bigger_than_cachesize; i++)
 	{
 		p[i] = 0;
@@ -173,7 +173,7 @@ void MMMRegisterBlocking(int NB)
 
 	// //cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
-	long *p = new long[bigger_than_cachesize];
+	int *p = (int *)malloc(bigger_than_cachesize);
 	for(int i = 0; i < bigger_than_cachesize; i++)
 	{
 		p[i] = 0;
