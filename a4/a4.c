@@ -311,12 +311,10 @@ void MMMVectorizedRegisterBlocking(int NB)
 
 				c = _mm_add_ps(c, d);
 
-				_mm_store_ps(C, c);
+				_mm_store_ps(&C[i][j], c);
 			}
 		}
 	}
-
-	printf("%7.2f\t%7.2f\t", C[0][0], C[1][1]);
 
 	//PAPI measurements
 	PAPI_read_counters(counters, 2);
@@ -333,6 +331,33 @@ void MMMVectorizedRegisterBlocking(int NB)
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", B[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", C[i][j]);
+		}
+		printf("\n");
+	}
 
 	//Free memory
 	Free2DArray((void**)A);
