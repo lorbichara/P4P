@@ -310,8 +310,13 @@ void MMMVectorizedRegisterBlocking(int NB)
 				__m128 d = _mm_mul_ps(a, b);
 
 				c = _mm_add_ps(c, d);
-
-				_mm_store_ps(&C[i][j], c);
+				
+				float temp[4];
+				_mm_store_ps(&temp, c);
+				C[i][j] = temp[0];
+				C[i+1][j] = temp[1];
+				C[i+2][j] = temp[2];
+				C[i+3][j] = temp[3];
 			}
 		}
 	}
