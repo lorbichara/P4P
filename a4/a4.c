@@ -121,6 +121,33 @@ void MMM()
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", a[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", b[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", c[i][j]);
+		}
+		printf("\n");
+	}
+
 	//Free memory
 	Free2DArray((void**)a);
 	Free2DArray((void**)b);
@@ -132,7 +159,7 @@ void MMMRegisterBlocking()
 {
 	int NB; //matrix size NB = N
 	scanf("%d", &NB);
-	int MU = 5; //values assigned based on Yotov paper, multiples of NB
+	int MU = 4; //multiple of 4
 	int NU = 1;
 
 	//create matrices of size NB
@@ -194,7 +221,6 @@ void MMMRegisterBlocking()
 			register float c2 = C[i+1][j];
 			register float c3 = C[i+2][j];
 			register float c4 = C[i+3][j];
-			register float c5 = C[i+4][j];
 
 			for(int k = 0; k < NB; k++)
 			{
@@ -204,7 +230,6 @@ void MMMRegisterBlocking()
 				register float a2 = A[i+1][k];
 				register float a3 = A[i+2][k];
 				register float a4 = A[i+3][k];
-				register float a5 = A[i+4][k];
 
 				//load B[k,j..j+NU-1] into registers
 				register float b1 = B[k][j]; //NU = 1 so we only load B[k][j]
@@ -216,13 +241,11 @@ void MMMRegisterBlocking()
 				c2 += a2 * b1;
 				c3 += a3 * b1;
 				c4 += a4 * b1;
-				c5 += a5 * b1;
 
 				C[i][j] = c1;
 				C[i+1][j] = c2;
 				C[i+2][j] = c3;
 				C[i+3][j] = c4;
-				C[i+4][j] = c5;
 			}
 		}
 	}
@@ -242,6 +265,33 @@ void MMMRegisterBlocking()
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", B[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < NB; i++)
+	{
+		for(int j = 0; j < NB; j++)
+		{
+			printf("%7.2f\t", C[i][j]);
+		}
+		printf("\n");
+	}
 
 	//Free memory
 	Free2DArray((void**)A);
@@ -406,5 +456,8 @@ void MMMVectorizedRegisterBlocking()
 
 int main()
 {
-	MMMVectorizedRegisterBlocking();
+	printf("Naive MMM: \n");
+	MMM();
+	printf("Register blocking MMM: \n");
+	MMMRegisterBlocking();
 }
