@@ -310,9 +310,13 @@ void MMMVectorizedRegisterBlocking(int NB)
 				__m128 d = _mm_mul_ps(a, b);
 
 				c = _mm_add_ps(c, d);
+
+				_mm_store_ps(C, c);
 			}
 		}
 	}
+
+	printf("%7.2f\t%7.2f\t", C[0][0], C[1][1]);
 
 	//PAPI measurements
 	PAPI_read_counters(counters, 2);
