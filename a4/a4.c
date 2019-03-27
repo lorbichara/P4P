@@ -295,7 +295,7 @@ void MMMVectorizedRegisterBlocking(int NB)
 			//j stays fixed because NU = 1
 			__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
 
-			for(int k = 0; k < NB; k+=4)
+			for(int k = 0; k < NB; k++)
 			{
 				//micro-kernel
 				//load A[i..i+MU-1,k] into registers
@@ -313,10 +313,10 @@ void MMMVectorizedRegisterBlocking(int NB)
 				
 				float temp[4];
 				_mm_store_ps(&temp, c);
-				C[i][j] = temp[0];
-				C[i+1][j] = temp[1];
-				C[i+2][j] = temp[2];
-				C[i+3][j] = temp[3];
+				C[i][j] = temp[3];
+				C[i+1][j] = temp[2];
+				C[i+2][j] = temp[1];
+				C[i+3][j] = temp[0];
 			}
 		}
 	}
