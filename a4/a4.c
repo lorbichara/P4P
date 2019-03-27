@@ -281,10 +281,24 @@ void MMMVectorizedRegisterBlocking(int NB)
 	// PAPI_library_init(PAPI_VER_CURRENT);
 	// int w = PAPI_start_counters(PAPI_events, 2);
 
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
 	float real_time, proc_time, mflops;
-	long long flpins;
-	int execTime;
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+    long long flpops;
+    float ireal_time, iproc_time, imflops;
+    long long iflpops;
+    int retval;
+
+    if ((retval = PAPI_flops(&ireal_time, &iproc_time, &iflpops, &imflops))
+            < PAPI_OK) {
+        printf("Could not initialise PAPI_flops \n");
+        printf("Your platform may not support floating point operation event.\n");
+        printf("retval: %d\n", retval);
+        exit(1);
+    }
 
 	//mini-kernel
 	for(int j = 0; j < NB; j+=NU)
@@ -318,13 +332,24 @@ void MMMVectorizedRegisterBlocking(int NB)
 		}
 	}
 
+	if ((retval = PAPI_flops(&real_time, &proc_time, &flpops, &mflops))
+            < PAPI_OK) {
+        printf("retval: %d\n", retval);
+        exit(1);
+    }
+    string flpops_tmp;
+    flpops_tmp = output_formatted_string(flpops);
+    printf(
+            "calculation: Real_time: %f Proc_time: %f Total flpops: %s MFLOPS: %f\n",
+            real_time, proc_time, flpops_tmp.c_str(), mflops);
+
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
 	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 
-	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
-	printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
-	PAPI_shutdown();
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// printf("Real_time:\t%f seconds\nProc_time:\t%f seconds\nTotal flpins:\t%lld\nMFLOPS:\t\t%f\n",real_time, proc_time, flpins, mflops);
+	// PAPI_shutdown();
 
 	//CPUID to flush pipeline and serialize instructions
 	int x, y;
