@@ -61,7 +61,7 @@ void MMM(int matrixSize)
 		}
 	}
 
-	// //cleaning cache
+	//cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
 	char *z = (char *)malloc(bigger_than_cachesize);
 	for(int i = 0; i < bigger_than_cachesize; i++)
@@ -115,33 +115,6 @@ void MMM(int matrixSize)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
 
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", a[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", b[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", c[i][j]);
-		}
-		printf("\n");
-	}
-
 	//Free memory
 	Free2DArray((void**)a);
 	Free2DArray((void**)b);
@@ -171,7 +144,7 @@ void MMMRegisterBlocking(int NB)
 		}
 	}
 
-	// //cleaning cache
+	//cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
 	char *z = (char *)malloc(bigger_than_cachesize);
 	for(int i = 0; i < bigger_than_cachesize; i++)
@@ -255,33 +228,6 @@ void MMMRegisterBlocking(int NB)
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", A[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", B[i][j]);
-		}
-		printf("\n");
-	}
-
-	for(int i = 0; i < NB; i++)
-	{
-		for(int j = 0; j < NB; j++)
-		{
-			printf("%7.2f\t", C[i][j]);
-		}
-		printf("\n");
-	}
 
 	//Free memory
 	Free2DArray((void**)A);
