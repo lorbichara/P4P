@@ -63,10 +63,10 @@ void MMM(int matrixSize)
 
 	// //cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
-	int *p = (int *)malloc(bigger_than_cachesize);
+	char *z = (char *)malloc(bigger_than_cachesize);
 	for(int i = 0; i < bigger_than_cachesize; i++)
 	{
-		p[i] = 0;
+		z[i] = 0;
 	}
 
 	//CPUID to flush pipeline and serialize instructions
@@ -173,10 +173,10 @@ void MMMRegisterBlocking(int NB)
 
 	// //cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
-	int *p = (int *)malloc(bigger_than_cachesize);
+	char *z = (char *)malloc(bigger_than_cachesize);
 	for(int i = 0; i < bigger_than_cachesize; i++)
 	{
-		p[i] = 0;
+		z[i] = 0;
 	}
 
 	//CPUID to flush pipeline and serialize instructions
