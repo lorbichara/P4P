@@ -352,7 +352,7 @@ void MMMCacheRegisterBlocking(int N)
 {
 	int MU = 4;
 	int NU = 1;
-	int NB = 4;
+	int NB = 8;
 
 	//create matrices of size NB
 	float **A = Allocate2DArray_Offloat(N, N);
@@ -399,7 +399,6 @@ void MMMCacheRegisterBlocking(int N)
 	// int execTime;
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-
 	for(int bj = 0; bj < N; bj+=NB)
 	{
 		for(int bi = 0; bi < N; bi+=NB)
@@ -418,24 +417,30 @@ void MMMCacheRegisterBlocking(int N)
 
 						for(int k = bk; k < min(bk + NB, N); k++)
 						{
-							//micro-kernel
-							//load A[i..i+MU-1,k] into registers
-							__m128 a = _mm_set_ps(A[i][k], A[i+1][k], A[i+2][k], A[i+3][k]);
+							for(int jj = j; jj < j+NU; jj++)
+							{
+								for(int ii = i; ii < i+MU; ii++)
+								{
+									//micro-kernel
+									//load A[i..i+MU-1,k] into registers
+									__m128 a = _mm_set_ps(A[i][k], A[i+1][k], A[i+2][k], A[i+3][k]);
 
-							//load B[k,j..j+NU-1] into registers
-							__m128 b = _mm_set_ps(B[k][j], B[k][j], B[k][j], B[k][j]);
+									//load B[k,j..j+NU-1] into registers
+									__m128 b = _mm_set_ps(B[k][j], B[k][j], B[k][j], B[k][j]);
 
-							//multiply A's and B's and add to C's
-							//store C[i..i+MU-1, j..j+NU-1]
-							__m128 d = _mm_mul_ps(a, b);
-							c = _mm_add_ps(c, d);
-							float temp[4];
-							_mm_store_ps(&temp, c);
+									//multiply A's and B's and add to C's
+									//store C[i..i+MU-1, j..j+NU-1]
+									__m128 d = _mm_mul_ps(a, b);
+									c = _mm_add_ps(c, d);
+									float temp[4];
+									_mm_store_ps(&temp, c);
 
-							C[i][j] = temp[3];
-							C[i+1][j] = temp[2];
-							C[i+2][j] = temp[1];
-							C[i+3][j] = temp[0];
+									C[i][j] = temp[3];
+									C[i+1][j] = temp[2];
+									C[i+2][j] = temp[1];
+									C[i+3][j] = temp[0];
+								}
+							}
 						}
 					}
 				}
