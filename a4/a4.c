@@ -579,7 +579,7 @@ void MMMCopying(int N)
 						{
 							//micro-kernel
 							//load A[i..i+MU-1,k] into registers
-							__m128 a = _mm_set_ps(&copyA[i][k], &copyA[i+1][k], &copyA[i+2][k], &copyA[i+3][k]);
+							__m128 a = _mm_set_ps(copyA[i], copyA[i+1], copyA[i+2], copyA[i+3]);
 
 							//load B[k,j..j+NU-1] into registers
 							__m128 b = _mm_load_ps(copyB);
