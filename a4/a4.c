@@ -545,7 +545,14 @@ void MMMCopying(int N)
 
 	//Copy A here
 	float copyA[N*N];
-	memcpy(&copyA, &A, N*N*4);
+	for(int t = 0; t < N; t++)
+	{
+		for(int u = 0; u < N; u++)
+		{
+			memcpy(&copyA[n*n+u], &A[t][u], 4);
+		}
+	}
+	
 
 	for(int t = 0; t < N*N; t++)
 	{
