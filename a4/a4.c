@@ -497,6 +497,9 @@ int main()
 	// printf("Register blocking MMM: \n");
 	// MMMRegisterBlocking(matrixSize);
 
-	printf("Vectorized Register Blocking: \n");
-	MMMVectorizedRegisterBlocking(matrixSize);
+	//printf("Vectorized Register Blocking: \n");
+	//MMMVectorizedRegisterBlocking(matrixSize);
+
+	printf("Cache Register Blocking: \n");
+	MMMCacheRegisterBlocking(matrixSize);
 }
