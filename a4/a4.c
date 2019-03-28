@@ -407,9 +407,9 @@ void MMMCacheRegisterBlocking(int N)
 			for(int bk = 0; bk < N; bk+=NB)
 			{
 				//mini-kernel
-				for(int j = bj; j < min(bk + NB-1, N); j+=NU)
+				for(int j = bj; j < min(bk + NB-1, N); j++)
 				{
-					for(int i = 0; i < min(bk + NB-1, N); i+=MU)
+					for(int i = 0; i < min(bk + NB-1, N); i++)
 					{
 						//load C[i..i+MU-1, j..j+NU-1] into registers
 						float helper[4] = {C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]};
