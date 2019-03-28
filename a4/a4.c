@@ -620,14 +620,14 @@ void MMMCopying(int N)
 	// 	}
 	// }
 
-	// for(int i = 0; i < N; i++)
-	// {
-	// 	for(int j = 0; j < N; j++)
-	// 	{
-	// 		printf("%7.2f\t", A[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
+	for(int i = 0; i < N; i++)
+	{
+		for(int j = 0; j < N; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
 
 	// for(int i = 0; i < N; i++)
 	// {
