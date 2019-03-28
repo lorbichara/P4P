@@ -407,16 +407,16 @@ void MMMCacheRegisterBlocking(int N)
 			for(int bk = 0; bk < N; bk+=NB)
 			{
 				//mini-kernel
-				for(int j = bj; j < min(bk + NB-1, N); j++)
+				for(int j = bj; j < min(bj + NB-1, N); j+=NU)
 				{
-					for(int i = 0; i < min(bk + NB-1, N); i++)
+					for(int i = bi; i < min(bi + NB-1, N); i+=MU)
 					{
 						//load C[i..i+MU-1, j..j+NU-1] into registers
 						float helper[4] = {C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]};
 						__m128 c = _mm_load_ps(helper);
 						//__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
 
-						for(int k = 0; k < min(bk + NB-1, N); k++)
+						for(int k = bk; k < min(bk + NB-1, N); k++)
 						{
 							//micro-kernel
 							//load A[i..i+MU-1,k] into registers
