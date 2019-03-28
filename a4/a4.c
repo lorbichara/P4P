@@ -571,7 +571,7 @@ void MMMCopying(int N)
 					for(int i = bi; i < min(bi + NB, N); i+=MU)
 					{
 						//load C[i..i+MU-1, j..j+NU-1] into registers
-						float helper[4] = {copyC[0], copyC[1], copyC[2], copyC[3]};
+						float helper[4] = {&copyC[0], &copyC[1], &copyC[2], &copyC[3]};
 						__m128 c = _mm_load_ps(helper);
 						//__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
 
