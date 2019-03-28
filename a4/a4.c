@@ -342,6 +342,151 @@ void MMMVectorizedRegisterBlocking(int NB)
 	Free2DArray((void**)C);
 }
 
+//Register-blocking and L1 cache-blocking
+void MMMCacheRegisterBlocking(int N)
+{
+	int MU = 4;
+	int NU = 1;
+	int NB = 4;
+
+	//create matrices of size NB
+	float **A = Allocate2DArray_Offloat(N, N);
+	float **B = Allocate2DArray_Offloat(N, N);
+	float **C = Allocate2DArray_Offloat(N, N);
+
+	srand(time(0));
+
+	for(int i = 0; i < N; i++)
+	{
+		for(int j = 0; j < N; j++)
+		{
+			A[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			B[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+		}
+	}
+
+	//cleaning cache
+	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
+	char *z = (char *)malloc(bigger_than_cachesize);
+	for(int i = 0; i < bigger_than_cachesize; i++)
+	{
+		z[i] = 0;
+	}
+
+	//CPUID to flush pipeline and serialize instructions
+	int p, q;
+	__asm__("cpuid"
+			:"=a"(q)
+			:"0"(p)
+			:"%ebx","%ecx","%edx");
+
+	//PAPI measurements
+	// long long counters[2];
+	// int PAPI_events[] = {
+	// 	PAPI_L1_DCM,
+	// 	PAPI_L1_DCA
+	// };
+	// PAPI_library_init(PAPI_VER_CURRENT);
+	// int w = PAPI_start_counters(PAPI_events, 2);
+
+	// float real_time, proc_time, mflops;
+	// long long flpins;
+	// int execTime;
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+
+
+	for(int bj = 0; bj < N; bj+=NB)
+	{
+		for(int bi = 0; bi < N; bi+=NB)
+		{
+			for(int bk = 0; bk < N; bk+=NB)
+			{
+				//mini-kernel
+				for(int j = bj; j < min(bk + NB-1, N); j+=NU)
+				{
+					for(int i = 0; i < min(bk + NB-1, N); i+=MU)
+					{
+						//load C[i..i+MU-1, j..j+NU-1] into registers
+						float helper[4] = {C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]};
+						__m128 c = _mm_load_ps(helper);
+						//__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
+
+						for(int k = 0; k < min(bk + NB-1, N); k++)
+						{
+							//micro-kernel
+							//load A[i..i+MU-1,k] into registers
+							__m128 a = _mm_set_ps(A[i][k], A[i+1][k], A[i+2][k], A[i+3][k]);
+
+							//load B[k,j..j+NU-1] into registers
+							__m128 b = _mm_set_ps(B[k][j], B[k][j], B[k][j], B[k][j]);
+
+							//multiply A's and B's and add to C's
+							//store C[i..i+MU-1, j..j+NU-1]
+							__m128 d = _mm_mul_ps(a, b);
+							c = _mm_add_ps(c, d);
+							float temp[4];
+							_mm_store_ps(&temp, c);
+
+							C[i][j] = temp[3];
+							C[i+1][j] = temp[2];
+							C[i+2][j] = temp[1];
+							C[i+3][j] = temp[0];
+						}
+					}
+				}
+			}
+		}
+	}
+
+	for(int i = 0; i < N; i++)
+	{
+		for(int j = 0; j < N; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < N; i++)
+	{
+		for(int j = 0; j < N; j++)
+		{
+			printf("%7.2f\t", B[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < N; i++)
+	{
+		for(int j = 0; j < N; j++)
+		{
+			printf("%7.2f\t", C[i][j]);
+		}
+		printf("\n");
+	}
+
+	//PAPI measurements
+	// PAPI_read_counters(counters, 2);
+	// printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+
+	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
+	// printf("Mflops: %f\n", mflops*4*4);
+	
+	// PAPI_shutdown();
+
+	//CPUID to flush pipeline and serialize instructions
+	int x, y;
+	__asm__("cpuid"
+			:"=a"(y)
+			:"0"(x)
+			:"%ebx","%ecx","%edx");
+
+	//Free memory
+	Free2DArray((void**)A);
+	Free2DArray((void**)B);
+	Free2DArray((void**)C);
+}
+
 int main()
 {
 	int matrixSize;
