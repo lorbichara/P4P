@@ -549,7 +549,7 @@ void MMMCopying(int N)
 	{
 		for(int u = 0; u < N; u++)
 		{
-			memcpy(&copyA[n*n+u], &A[t][u], 4);
+			memcpy(&copyA[t*N+u], &A[t][u], 4);
 		}
 	}
 	
