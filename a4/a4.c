@@ -669,24 +669,37 @@ void MMMCopying(int N)
 	Free2DArray((void**)C);
 }
 
-
-
-int main()
+void MMMMLK(int matrixSize)
 {
-	int matrixSize;
-	scanf("%d", &matrixSize);
+	//
+}
 
-	// printf("Naive MMM: \n");
-	// MMM(matrixSize);
-	// printf("Register blocking MMM: \n");
-	// MMMRegisterBlocking(matrixSize);
+int main(int argc, char *argv[])
+{
+	int matrixSize = argv[1];
 
-	//printf("Vectorized Register Blocking: \n");
-	//MMMVectorizedRegisterBlocking(matrixSize);
+	char question;
+	scanf(&question);
 
-	// printf("Cache Register Blocking: \n");
-	// MMMCacheRegisterBlocking(matrixSize);
-
-	printf("Copying: \n");
-	MMMCopying(matrixSize);
+	switch(question)
+	{
+		case 'a':
+			MMM(matrixSize);
+			break;
+		case 'b':
+			MMMRegisterBlocking(matrixSize);
+			break;
+		case 'c':
+			MMMVectorizedRegisterBlocking(matrixSize);
+			break;
+		case 'd':
+			MMMCacheRegisterBlocking(matrixSize);
+			break;
+		case 'e':
+			MMMCopying(matrixSize);
+			break;
+		case 'f':
+			MMMMLK(matrixSize);
+			break;
+	}
 }
