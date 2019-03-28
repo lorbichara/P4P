@@ -7,6 +7,11 @@
 #include <time.h>
 #include <immintrin.h>
 
+int min(int x, int y) 
+{ 
+	return y ^ ((x ^ y) & -(x < y)); 
+} 
+
 //allocation routine to allocate storage
 float **Allocate2DArray_Offloat(int x, int y)
 {
