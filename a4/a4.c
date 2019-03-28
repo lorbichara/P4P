@@ -545,14 +545,14 @@ void MMMCopying(int N)
 
 	//Copy A here
 	float copyA[N*N];
-	memcpy(copyA, A);
+	memcpy(copyA, A, N*N*4);
 	for(int bj = 0; bj < N; bj+=NB)
 	{
 		//Copy a row/column of B here
 		float copyB[N];
 		for(int l = 0; l < N; l++)
 		{
-			memcpy(&copyB[l], &B[l][bj]);
+			memcpy(&copyB[l], &B[l][bj], 4);
 		}
 		
 		for(int bi = 0; bi < N; bi+=NB)
@@ -561,7 +561,7 @@ void MMMCopying(int N)
 			float copyC[NB];
 			for(int l = 0; l < N; l++)
 			{
-				memcpy(copyC[l], C[bi][bj]);
+				memcpy(copyC[l], C[bi][bj], 4);
 			}
 			for(int bk = 0; bk < N; bk+=NB)
 			{
@@ -596,10 +596,10 @@ void MMMCopying(int N)
 							copyC[2] = temp[1];
 							copyC[3] = temp[0];
 
-							memcpy(C[i][j], copyC[0]);
-							memcpy(C[i+1][j], copyC[1]);
-							memcpy(C[i+2][j], copyC[2]);
-							memcpy(C[i+3][j], copyC[3]);
+							memcpy(C[i][j], copyC[0], 4);
+							memcpy(C[i+1][j], copyC[1], 4);
+							memcpy(C[i+2][j], copyC[2], 4);
+							memcpy(C[i+3][j], copyC[3], 4);
 						}
 					}
 				}
