@@ -386,13 +386,13 @@ void MMMCacheRegisterBlocking(int N)
 			:"%ebx","%ecx","%edx");
 
 	//PAPI measurements
-	long long counters[2];
-	int PAPI_events[] = {
-		PAPI_L1_DCM,
-		PAPI_L1_DCA
-	};
-	PAPI_library_init(PAPI_VER_CURRENT);
-	int w = PAPI_start_counters(PAPI_events, 2);
+	// long long counters[2];
+	// int PAPI_events[] = {
+	// 	PAPI_L1_DCM,
+	// 	PAPI_L1_DCA
+	// };
+	// PAPI_library_init(PAPI_VER_CURRENT);
+	// int w = PAPI_start_counters(PAPI_events, 2);
 
 	float real_time, proc_time, mflops;
 	long long flpins;
