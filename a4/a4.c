@@ -657,8 +657,6 @@ int main(int argc, char *argv[])
 	char question;
 	scanf(" %c", &question);
 
-	printf("%d", matrixSize);
-
 	switch(question)
 	{
 		case 'a':
