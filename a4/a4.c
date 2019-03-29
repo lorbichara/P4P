@@ -645,18 +645,18 @@ void MMMCopying(int N)
 
 void MMMMKL(int matrixSize)
 {
-	double *A, *B, *C;
+	float *A, *B, *C;
 
-	double alpha = 1.0;
-	double beta = 0.0;
+	float alpha = 1.0;
+	float beta = 0.0;
 
-	A = (double *)mkl_malloc( matrixSize*matrixSize*sizeof( double ), 64 );
-    B = (double *)mkl_malloc( matrixSize*matrixSize*sizeof( double ), 64 );
-    C = (double *)mkl_malloc( matrixSize*matrixSize*sizeof( double ), 64 );
+	A = (float *)mkl_malloc( matrixSize*matrixSize*sizeof( float ), 64 );
+    B = (float *)mkl_malloc( matrixSize*matrixSize*sizeof( float ), 64 );
+    C = (float *)mkl_malloc( matrixSize*matrixSize*sizeof( float ), 64 );
 
     for (int i = 0; i < (matrixSize*matrixSize); i++) {
-        A[i] = (double)(i+1);
-        B[i] = (double)(-i-1);
+        A[i] = (float)(i+1);
+        B[i] = (float)(-i-1);
         C[i] = 0.0;
     }
 
@@ -688,7 +688,7 @@ void MMMMKL(int matrixSize)
 	int execTime;
 	execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, matrixSize, matrixSize, matrixSize, alpha, A, matrixSize, B, matrixSize, beta, C, matrixSize);
+	cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, matrixSize, matrixSize, matrixSize, alpha, A, matrixSize, B, matrixSize, beta, C, matrixSize);
 	
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
