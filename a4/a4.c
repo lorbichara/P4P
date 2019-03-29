@@ -442,7 +442,7 @@ void MMMCacheRegisterBlocking(int N)
 		}
 	}
 
-	PAPI measurements
+	//PAPI measurements
 	PAPI_read_counters(counters, 2);
 	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
 
@@ -649,7 +649,7 @@ void MMMMLK(int matrixSize)
 
 int main(int argc, char *argv[])
 {
-	int matrixSize = argv[1];
+	int matrixSize = atoi(argv[1]);
 
 	printf("Type in a letter based on the matrix multiplication version you want to use:\n");
 	printf("a - Naive\nb - Register Blocking\nc - Vectorized Register Blocking\nd - Cache Register Blocking\ne - Copying\nf - MLK\n");
@@ -657,7 +657,7 @@ int main(int argc, char *argv[])
 	char question;
 	scanf(" %c", &question);
 
-	printf("%c", question);
+	printf("%d", matrixSize);
 
 	switch(question)
 	{
