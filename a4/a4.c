@@ -6,6 +6,7 @@
 #include <papi.h>
 #include <time.h>
 #include <immintrin.h>
+#include "mkl.h"
 
 int min(int x, int y) 
 { 
@@ -644,7 +645,80 @@ void MMMCopying(int N)
 
 void MMMMLK(int matrixSize)
 {
-	//
+	float **A = Allocate2DArray_Offloat(matrixSize, matrixSize);
+	float **B = Allocate2DArray_Offloat(matrixSize, matrixSize);
+	float **C = Allocate2DArray_Offloat(matrixSize, matrixSize);
+
+	double alpha = 1.0;
+	double beta = 0.0;
+
+	srand(time(0));
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			a[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			b[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+		}
+	}
+
+	//cleaning cache
+	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
+	char *z = (char *)malloc(bigger_than_cachesize);
+	for(int i = 0; i < bigger_than_cachesize; i++)
+	{
+		z[i] = 0;
+	}
+
+	//CPUID to flush pipeline and serialize instructions
+	int p, q;
+	__asm__("cpuid"
+			:"=a"(q)
+			:"0"(p)
+			:"%ebx","%ecx","%edx");
+
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, matrixSize, matrixSize, matrixSize, alpha, A, matrixSize, B, matrixSize, beta, C, matrixSize);
+	
+	//CPUID to flush pipeline and serialize instructions
+	int x, y;
+	__asm__("cpuid"
+			:"=a"(y)
+			:"0"(x)
+			:"%ebx","%ecx","%edx");
+
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", A[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", B[i][j]);
+		}
+		printf("\n");
+	}
+
+	for(int i = 0; i < matrixSize; i++)
+	{
+		for(int j = 0; j < matrixSize; j++)
+		{
+			printf("%7.2f\t", C[i][j]);
+		}
+		printf("\n");
+	}
+
+	//Free memory
+	Free2DArray((void**)a);
+	Free2DArray((void**)b);
+	Free2DArray((void**)c);
 }
 
 int main(int argc, char *argv[])
