@@ -385,7 +385,7 @@ void MMMCacheRegisterBlocking(int N)
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
 
-	PAPI measurements
+	//PAPI measurements
 	long long counters[2];
 	int PAPI_events[] = {
 		PAPI_L1_DCM,
@@ -441,7 +441,7 @@ void MMMCacheRegisterBlocking(int N)
 			}
 		}
 	}
-	
+
 	PAPI measurements
 	PAPI_read_counters(counters, 2);
 	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
