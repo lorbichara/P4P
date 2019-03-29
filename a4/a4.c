@@ -645,23 +645,27 @@ void MMMCopying(int N)
 
 void MMMMKL(int matrixSize)
 {
-	float **A = Allocate2DArray_Offloat(matrixSize, matrixSize);
-	float **B = Allocate2DArray_Offloat(matrixSize, matrixSize);
-	float **C = Allocate2DArray_Offloat(matrixSize, matrixSize);
+	double *A, *B, *C;
 
 	double alpha = 1.0;
 	double beta = 0.0;
 
-	srand(time(0));
+	A = (double *)mkl_malloc( m*k*sizeof( double ), 64 );
+    B = (double *)mkl_malloc( k*n*sizeof( double ), 64 );
+    C = (double *)mkl_malloc( m*n*sizeof( double ), 64 );
 
-	for(int i = 0; i < matrixSize; i++)
-	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			A[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
-			B[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
-		}
-	}
+    printf (" Intializing matrix data \n\n");
+    for (i = 0; i < (matrixSize*matrixSize); i++) {
+        A[i] = (double)(i+1);
+    }
+
+    for (i = 0; i < (matrixSize*matrixSize); i++) {
+        B[i] = (double)(-i-1);
+    }
+
+    for (i = 0; i < (matrixSize*matrixSize); i++) {
+        C[i] = 0.0;
+    }
 
 	//cleaning cache
 	const size_t bigger_than_cachesize = 10 * 1024 * 1024;
@@ -688,37 +692,29 @@ void MMMMKL(int matrixSize)
 			:"%ebx","%ecx","%edx");
 
 
-	for(int i = 0; i < matrixSize; i++)
+	for(int i = 0; i < matrixSize*matrixSize; i++)
 	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", A[i][j]);
-		}
-		printf("\n");
+		printf("%12.0f\t", A[i]);
 	}
 
-	for(int i = 0; i < matrixSize; i++)
+	printf("\n");
+
+	for(int i = 0; i < matrixSize*matrixSize; i++)
 	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", B[i][j]);
-		}
-		printf("\n");
+		printf("%12.0f\t", B[i]);
 	}
 
-	for(int i = 0; i < matrixSize; i++)
+	printf("\n");
+
+	for(int i = 0; i < matrixSize*matrixSize; i++)
 	{
-		for(int j = 0; j < matrixSize; j++)
-		{
-			printf("%7.2f\t", C[i][j]);
-		}
-		printf("\n");
+		printf("%12.0f\t", C[i]);
 	}
 
 	//Free memory
-	Free2DArray((void**)A);
-	Free2DArray((void**)B);
-	Free2DArray((void**)C);
+	mkl_free(A);
+    mkl_free(B);
+    mkl_free(C);
 }
 
 int main(int argc, char *argv[])
