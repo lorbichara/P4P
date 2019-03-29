@@ -533,66 +533,66 @@ void MMMCopying(int N)
 		printf("7.2%f ", copyA[t]);
 	}
 
-	// for(int bj = 0; bj < N; bj+=NB)
-	// {
-	// 	//Copy a row/column of B here
-	// 	float copyB[N];
-	// 	for(int l = 0; l < N; l++)
-	// 	{
-	// 		memcpy(&copyB[l], &B[l][bj], 4);
-	// 	}
+	for(int bj = 0; bj < N; bj+=NB)
+	{
+		//Copy a row/column of B here
+		float copyB[N];
+		for(int l = 0; l < N; l++)
+		{
+			memcpy(&copyB[l], &B[l][bj], 4);
+		}
 		
-	// 	for(int bi = 0; bi < N; bi+=NB)
-	// 	{
-	// 		//Copy an element of C here
-	// 		float copyC[NB];
-	// 		for(int l = 0; l < N; l++)
-	// 		{
-	// 			memcpy(&copyC[l], &C[bi][bj], 4);
-	// 		}
-	// 		for(int bk = 0; bk < N; bk+=NB)
-	// 		{
-	// 			//mini-kernel
-	// 			for(int j = bj; j < min(bj + NB, N); j+=NU)
-	// 			{
-	// 				for(int i = bi; i < min(bi + NB, N); i+=MU)
-	// 				{
-	// 					//load C[i..i+MU-1, j..j+NU-1] into registers
-	// 					float helper[4] = {copyC[0], copyC[1], copyC[2], copyC[3]};
-	// 					__m128 c = _mm_load_ps(helper);
-	// 					//__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
+		for(int bi = 0; bi < N; bi+=NB)
+		{
+			//Copy an element of C here
+			float copyC[NB];
+			for(int l = 0; l < N; l++)
+			{
+				memcpy(&copyC[l], &C[bi][bj], 4);
+			}
+			for(int bk = 0; bk < N; bk+=NB)
+			{
+				//mini-kernel
+				for(int j = bj; j < min(bj + NB, N); j+=NU)
+				{
+					for(int i = bi; i < min(bi + NB, N); i+=MU)
+					{
+						//load C[i..i+MU-1, j..j+NU-1] into registers
+						float helper[4] = {copyC[0], copyC[1], copyC[2], copyC[3]};
+						__m128 c = _mm_load_ps(helper);
+						//__m128 c = _mm_set_ps(C[i][j], C[i+1][j], C[i+2][j], C[i+3][j]);
 
-	// 					for(int k = bk; k < min(bk + NB, N); k++)
-	// 					{
-	// 						//micro-kernel
-	// 						//load A[i..i+MU-1,k] into registers
-	// 						__m128 a = _mm_set_ps(copyA[i], copyA[i+1], copyA[i+2], copyA[i+3]);
+						for(int k = bk; k < min(bk + NB, N); k++)
+						{
+							//micro-kernel
+							//load A[i..i+MU-1,k] into registers
+							__m128 a = _mm_set_ps(copyA[i], copyA[i+1], copyA[i+2], copyA[i+3]);
 
-	// 						//load B[k,j..j+NU-1] into registers
-	// 						__m128 b = _mm_load_ps(copyB);
+							//load B[k,j..j+NU-1] into registers
+							__m128 b = _mm_load_ps(copyB);
 
-	// 						//multiply A's and B's and add to C's
-	// 						//store C[i..i+MU-1, j..j+NU-1]
-	// 						__m128 d = _mm_mul_ps(a, b);
-	// 						c = _mm_add_ps(c, d);
-	// 						float temp[4];
-	// 						_mm_store_ps(&temp, c);
+							//multiply A's and B's and add to C's
+							//store C[i..i+MU-1, j..j+NU-1]
+							__m128 d = _mm_mul_ps(a, b);
+							c = _mm_add_ps(c, d);
+							float temp[4];
+							_mm_store_ps(&temp, c);
 
-	// 						copyC[0]= temp[3];
-	// 						copyC[1] = temp[2];
-	// 						copyC[2] = temp[1];
-	// 						copyC[3] = temp[0];
+							copyC[0]= temp[3];
+							copyC[1] = temp[2];
+							copyC[2] = temp[1];
+							copyC[3] = temp[0];
 
-	// 						memcpy(&C[i][j], &copyC[0], 4);
-	// 						memcpy(&C[i+1][j], &copyC[1], 4);
-	// 						memcpy(&C[i+2][j], &copyC[2], 4);
-	// 						memcpy(&C[i+3][j], &copyC[3], 4);
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+							memcpy(&C[i][j], &copyC[0], 4);
+							memcpy(&C[i+1][j], &copyC[1], 4);
+							memcpy(&C[i+2][j], &copyC[2], 4);
+							memcpy(&C[i+3][j], &copyC[3], 4);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	for(int i = 0; i < N; i++)
 	{
@@ -602,24 +602,6 @@ void MMMCopying(int N)
 		}
 		printf("\n");
 	}
-
-	// for(int i = 0; i < N; i++)
-	// {
-	// 	for(int j = 0; j < N; j++)
-	// 	{
-	// 		printf("%7.2f\t", B[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
-
-	// for(int i = 0; i < N; i++)
-	// {
-	// 	for(int j = 0; j < N; j++)
-	// 	{
-	// 		printf("%7.2f\t", C[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
 
 	//PAPI measurements
 	// PAPI_read_counters(counters, 2);
