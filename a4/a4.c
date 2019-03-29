@@ -352,7 +352,7 @@ void MMMCacheRegisterBlocking(int N)
 {
 	int MU = 4;
 	int NU = 1;
-	int NB = 8;
+	int NB = 4;
 
 	//create matrices of size NB
 	float **A = Allocate2DArray_Offloat(N, N);
