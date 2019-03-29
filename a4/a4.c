@@ -95,11 +95,11 @@ void MMM(int matrixSize)
 	// int execTime;
 	// execTime=PAPI_flops(&real_time, &proc_time, &flpins, &mflops);
 
-	for(int i = 0; i < matrixSize; i++)
+	for(int j = 0; j < matrixSize; j++)
 	{
-		for(int k = 0; k < matrixSize; k++)
+		for(int i = 0; i < matrixSize; i++)
 		{
-			for(int j = 0; j < matrixSize; j++)
+			for(int k = 0; k < matrixSize; k++)
 			{
 				c[i][j] += a[i][k] * b[k][j];
 			}
