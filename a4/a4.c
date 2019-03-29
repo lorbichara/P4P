@@ -657,6 +657,8 @@ int main(int argc, char *argv[])
 	char question;
 	scanf(" %c", &question);
 
+	printf("%c", question);
+
 	switch(question)
 	{
 		case 'a':
