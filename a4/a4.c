@@ -643,7 +643,7 @@ void MMMCopying(int N)
 	Free2DArray((void**)C);
 }
 
-void MMMMLK(int matrixSize)
+void MMMMKL(int matrixSize)
 {
 	float **A = Allocate2DArray_Offloat(matrixSize, matrixSize);
 	float **B = Allocate2DArray_Offloat(matrixSize, matrixSize);
@@ -749,7 +749,7 @@ int main(int argc, char *argv[])
 			MMMCopying(matrixSize);
 			break;
 		case 'f':
-			MMMMLK(matrixSize);
+			MMMMKL(matrixSize);
 			break;
 	}
 }
