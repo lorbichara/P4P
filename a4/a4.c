@@ -679,8 +679,7 @@ int main(int argc, char *argv[])
 	int matrixSize = argv[1];
 
 	printf("Type in a letter based on the matrix multiplication version you want to use:\n");
-	printf("a - Naive\nb - Register Blocking\nc - Vectorized Register Blocking\n
-		d - Cache Register Blocking\ne - Copying\nf - MLK\n");
+	printf("a - Naive\nb - Register Blocking\nc - Vectorized Register Blocking\nd - Cache Register Blocking\ne - Copying\nf - MLK\n");
 
 	char question;
 	scanf(&question);
