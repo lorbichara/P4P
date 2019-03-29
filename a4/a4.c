@@ -650,20 +650,14 @@ void MMMMKL(int matrixSize)
 	double alpha = 1.0;
 	double beta = 0.0;
 
-	A = (double *)mkl_malloc( m*k*sizeof( double ), 64 );
-    B = (double *)mkl_malloc( k*n*sizeof( double ), 64 );
-    C = (double *)mkl_malloc( m*n*sizeof( double ), 64 );
+	A = (double *)mkl_malloc( matrixSize*matrixSize*sizeof( double ), 64 );
+    B = (double *)mkl_malloc( matrixSize*matrixSize*sizeof( double ), 64 );
+    C = (double *)mkl_malloc( matrixSize*matrixSize*sizeof( double ), 64 );
 
     printf (" Intializing matrix data \n\n");
-    for (i = 0; i < (matrixSize*matrixSize); i++) {
+    for (int i = 0; i < (matrixSize*matrixSize); i++) {
         A[i] = (double)(i+1);
-    }
-
-    for (i = 0; i < (matrixSize*matrixSize); i++) {
         B[i] = (double)(-i-1);
-    }
-
-    for (i = 0; i < (matrixSize*matrixSize); i++) {
         C[i] = 0.0;
     }
 
