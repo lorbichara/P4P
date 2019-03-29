@@ -682,7 +682,7 @@ int main(int argc, char *argv[])
 	printf("a - Naive\nb - Register Blocking\nc - Vectorized Register Blocking\nd - Cache Register Blocking\ne - Copying\nf - MLK\n");
 
 	char question;
-	scanf(&question);
+	scanf(" %c", &question);
 
 	switch(question)
 	{
