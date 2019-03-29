@@ -676,34 +676,27 @@ void MMMMKL(int matrixSize)
 			:"0"(p)
 			:"%ebx","%ecx","%edx");
 
+	//PAPI measurements
+	long long counters[2];
+	int PAPI_events[] = {
+		PAPI_L1_DCM,
+		PAPI_L1_DCA
+	};
+	PAPI_library_init(PAPI_VER_CURRENT);
+	int w = PAPI_start_counters(PAPI_events, 2);
+
 	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, matrixSize, matrixSize, matrixSize, alpha, A, matrixSize, B, matrixSize, beta, C, matrixSize);
 	
+	//PAPI measurements
+	PAPI_read_counters(counters, 2);
+	printf("%lld L1 cache misses (%.3lf%% misses)\n", counters[0],(double)counters[0] / (double)counters[1]);
+
 	//CPUID to flush pipeline and serialize instructions
 	int x, y;
 	__asm__("cpuid"
 			:"=a"(y)
 			:"0"(x)
 			:"%ebx","%ecx","%edx");
-
-
-	for(int i = 0; i < matrixSize*matrixSize; i++)
-	{
-		printf("%12.0f\t", A[i]);
-	}
-
-	printf("\n");
-
-	for(int i = 0; i < matrixSize*matrixSize; i++)
-	{
-		printf("%12.0f\t", B[i]);
-	}
-
-	printf("\n");
-
-	for(int i = 0; i < matrixSize*matrixSize; i++)
-	{
-		printf("%12.0f\t", C[i]);
-	}
 
 	//Free memory
 	mkl_free(A);
