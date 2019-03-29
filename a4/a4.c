@@ -658,8 +658,8 @@ void MMMMLK(int matrixSize)
 	{
 		for(int j = 0; j < matrixSize; j++)
 		{
-			a[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
-			b[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			A[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
+			B[i][j] = (float)rand()/(float)(RAND_MAX/20.000);
 		}
 	}
 
@@ -716,9 +716,9 @@ void MMMMLK(int matrixSize)
 	}
 
 	//Free memory
-	Free2DArray((void**)a);
-	Free2DArray((void**)b);
-	Free2DArray((void**)c);
+	Free2DArray((void**)A);
+	Free2DArray((void**)B);
+	Free2DArray((void**)C);
 }
 
 int main(int argc, char *argv[])
