@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
   //create threads
   for(int i = 0; i < NUM_THREADS; i++)
   {
+    printf("Creating thread %d\n", i);
     shortNames[i] = i;
     pthread_create(& handles[i], &attr, compute_pi, & shortNames[i]);
   }
