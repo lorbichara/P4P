@@ -1,3 +1,5 @@
+//Computes an estimate for pi sequentially.
+
 #include <pthread.h> /*used in other parts of the assignment */
 #include <stdlib.h>
 #include <math.h>

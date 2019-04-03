@@ -1,3 +1,6 @@
+//Computes an estimate for pi in parallel using pthreads.
+//Whenever a thread computes a value, it should add it directly to the global variable pi without any synchronization.
+
 #include <pthread.h> /*used in other parts of the assignment */
 #include <stdlib.h>
 #include <math.h>
