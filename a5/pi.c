@@ -10,35 +10,38 @@
 pthread_t handles[MAX_THREADS];
 int shortNames[MAX_THREADS];
 
+void *compute_pi (void *);
+
+int numPoints;
+int NUM_THREADS;
+double step;
+double pi = 0.0;
+double x = 0.0d;
+
 double f(double x) {
   return (6.0/sqrt(1-x*x));
 }
 
-void *compute_pi (void *);
-
-int numPoints = 1000000000;
-double step = 0.5/1000000000;
-double pi = 0.0;
-double x = 0.0d;
-int NUM_THREADS;
-
 int main(int argc, char *argv[]) {
+  pthread_attr_t attr;
+  pthread_attr_init (&attr);
 
+  numPoints = 1000000000;
+  step = 0.5/numPoints;
   NUM_THREADS = atoi(argv[1]); //number of threads is an input
 
   uint64_t execTime; /*time in nanoseconds */
   struct timespec tick, tock;
   clock_gettime(CLOCK_MONOTONIC_RAW, &tick);
   
-  pthread_attr_t attr;
-  pthread_attr_init (&attr);
-
+  //create threads
   for(int i = 0; i < NUM_THREADS; i++)
   {
     shortNames[i] = i;
     pthread_create(& handles[i], &attr, compute_pi, & shortNames[i]);
   }
 
+  //join with threads. No need to add contributions since they were directly added to the global variable
   for(int i = 0; i < NUM_THREADS; i++)
   {
     pthread_join(handles[i], NULL);
@@ -54,6 +57,7 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+//function that computes pi using threads and adding directly to a global variable pi
 void *compute_pi (void *threadIdPtr)
 {
   int myId = *(int *)threadIdPtr;
