@@ -17,7 +17,7 @@ double f(double x) {
 void *compute_pi (void *);
 
 int numPoints = 1000000000;
-double step = 0.5/numPoints;
+double step = 0.5/1000000000;
 double pi = 0.0;
 double x = 0.0d;
 int NUM_THREADS;
