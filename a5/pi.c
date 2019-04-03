@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>  /* for uint64  */
 #include <time.h>    /* for clock_gettime */
-#include <atomic>    /*used in other parts of the assignment */
+//#include <atomic>    /*used in other parts of the assignment */
 
 #define MAX_THREADS 8
 pthread_t handles[MAX_THREADS];
@@ -14,25 +14,17 @@ double f(double x) {
   return (6.0/sqrt(1-x*x));
 }
 
+void *compute_pi (void *);
+
 int numPoints = 1000000000;
 double step = 0.5/numPoints;
 double pi = 0.0;
 double x = 0.0d;
-
-void *compute_pi (void *threadIdPtr)
-{
-  int myId = *(int *)threadIdPtr;
-
-  for(int i = myId; i < numPoints; i+=NUM_THREADS)
-  {
-    x = step * ((double) i); //next x
-    pi += step * f(x);
-  }
-}
+int NUM_THREADS;
 
 int main(int argc, char *argv[]) {
 
-  int NUM_THREADS = argv[1];
+  NUM_THREADS = atoi(argv[1]); //number of threads is an input
 
   uint64_t execTime; /*time in nanoseconds */
   struct timespec tick, tock;
@@ -60,4 +52,15 @@ int main(int argc, char *argv[]) {
 
   printf("%.20f\n", pi);
   return 0;
+}
+
+void *compute_pi (void *threadIdPtr)
+{
+  int myId = *(int *)threadIdPtr;
+
+  for(int i = myId; i < numPoints; i+=NUM_THREADS)
+  {
+    x = step * ((double) i); //next x
+    pi += step * f(x);
+  }
 }
