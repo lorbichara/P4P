@@ -31,6 +31,9 @@ void *compute_pi (void *threadIdPtr)
 }
 
 int main(int argc, char *argv[]) {
+
+  int NUM_THREADS = argv[1];
+
   uint64_t execTime; /*time in nanoseconds */
   struct timespec tick, tock;
   clock_gettime(CLOCK_MONOTONIC_RAW, &tick);
