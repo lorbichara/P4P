@@ -41,9 +41,15 @@ int main(int argc, char *argv[]) {
   //create threads
   for(int i = 0; i < NUM_THREADS; i++)
   {
-    printf("Creating thread %d\n", i);
+    //printf("Creating thread %d\n", i);
     shortNames[i] = i;
     pthread_create(& handles[i], &attr, compute_pi, & shortNames[i]);
+  }
+
+  //join with threads. No need to add contributions since they were directly added to the global variable
+  for(int i = 0; i < NUM_THREADS; i++)
+  {
+    pthread_join(handles[i], NULL);
   }
 
   clock_gettime(CLOCK_MONOTONIC_RAW, &tock);
