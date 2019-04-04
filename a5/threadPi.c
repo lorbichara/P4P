@@ -46,12 +46,6 @@ int main(int argc, char *argv[]) {
     pthread_create(& handles[i], &attr, compute_pi, & shortNames[i]);
   }
 
-  //join with threads. No need to add contributions since they were directly added to the global variable
-  for(int i = 0; i < NUM_THREADS; i++)
-  {
-    pthread_join(handles[i], NULL);
-  }
-
   clock_gettime(CLOCK_MONOTONIC_RAW, &tock);
  
   execTime = 1000000000 * (tock.tv_sec - tick.tv_sec) + tock.tv_nsec - tick.tv_nsec;
