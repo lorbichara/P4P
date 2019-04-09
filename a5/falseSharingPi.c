@@ -70,7 +70,6 @@ void *compute_pi (void *threadIdPtr)
 {
   int myId = *(int *)threadIdPtr;
 
-  double mySum = 0.0;
   for(int i = myId; i < numPoints; i+=NUM_THREADS)
   {
     x = step * ((double) i); //next x
