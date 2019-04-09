@@ -74,7 +74,6 @@ void *compute_pi (void *threadIdPtr)
   for(int i = myId; i < numPoints; i+=NUM_THREADS)
   {
     x = step * ((double) i); //next x
-    mySum += step * f(x); //add to local sum
+    sum[myId] += step * f(x); //add directly to sum[t]
   }
-  sum[myId] = mySum;
 }
