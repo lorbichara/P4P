@@ -51,14 +51,7 @@ int main(int argc, char *argv[]) {
     pthread_create(& handles[i], &attr, compute_pi, & shortNames[i]);
   }
 
-  int rc = pthread_barrier_wait(&barr);
-
-  if(rc != 0 && rc != pthread_barrier_serial_thread)
-  {
-    printf("Could not wait on barrier\n");
-    exit(-1);
-  }
-  
+  pthread_barrier_wait(&barr);
   for(int i = 0; i < NUM_THREADS; i++) //only to add contributions, not to synchronize threads.
   {
     pi += sum[i];
@@ -85,6 +78,8 @@ void *compute_pi (void *threadIdPtr)
     x = step * ((double) i); //next x
     mySum += step * f(x); //add contributions to local variable
   }
+
+  pthread_barrier_wait(&barr);
 
   sum[myId] = mySum; //write final contribution to global sum array
 }
