@@ -1,5 +1,5 @@
 //Computes an estimate for pi in parallel using pthreads.
-//Whenever a thread computes a value, it adds its contributions into a global array sum
+//Whenever a thread computes a value, it adds its contributions directly into a global array sum
 //At the end, the main thread adds the values in the array to produce an estimate for pi.
 
 #include <pthread.h> /*used in other parts of the assignment */

@@ -1,7 +1,7 @@
 //Computes an estimate for pi in parallel using pthreads.
-//Whenever a thread computes a value, it adds its contributions into a local variable.
-//This value is then written to a global array sum
+//Whenever a thread computes a value, it adds its contributions into a global array sum
 //At the end, the main thread adds the values in the array to produce an estimate for pi.
+//Instead of using pthread_join, this program uses barriers to synchronize.
 
 #include <pthread.h> /*used in other parts of the assignment */
 #include <stdlib.h>
@@ -13,6 +13,7 @@
 
 #define MAX_THREADS 8
 pthread_t handles[MAX_THREADS];
+pthread_barrier_t barr;
 int shortNames[MAX_THREADS];
 
 void *compute_pi (void *);
@@ -31,6 +32,7 @@ double f(double x) {
 int main(int argc, char *argv[]) {
   pthread_attr_t attr;
   pthread_attr_init (&attr);
+  pthread_barrier_init(&barr, NULL, atoi(argv[1]));
 
   pi = 0.0;
   numPoints = 1000000000;
@@ -49,10 +51,9 @@ int main(int argc, char *argv[]) {
     pthread_create(& handles[i], &attr, compute_pi, & shortNames[i]);
   }
 
-  //join with threads. Contributions added to variable pi.
-  for(int i = 0; i < NUM_THREADS; i++)
+  pthread_barrier_wait(&barr);
+  for(int i = 0; i < NUM_THREADS; i++) //only to add contributions, not to synchronize threads.
   {
-    pthread_join(handles[i], NULL);
     pi += sum[i];
   }
 
