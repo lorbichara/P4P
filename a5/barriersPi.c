@@ -32,7 +32,7 @@ double f(double x) {
 int main(int argc, char *argv[]) {
   pthread_attr_t attr;
   pthread_attr_init (&attr);
-  pthread_barrier_init(&barr, NULL, atoi(argv[1]));
+  pthread_barrier_init(&barr, NULL, atoi(argv[1])+1); //number of threads + 1 to count the main thread
 
   pi = 0.0;
   numPoints = 1000000000;
@@ -52,6 +52,7 @@ int main(int argc, char *argv[]) {
   }
 
   pthread_barrier_wait(&barr);
+ 
   for(int i = 0; i < NUM_THREADS; i++) //only to add contributions, not to synchronize threads.
   {
     pi += sum[i];
