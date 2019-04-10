@@ -1,0 +1,28 @@
+Lorraine Bichara
+lb34995
+CS 377 P
+
+This folder includes several variations of programs to compute pi numerically.
+
+1) Pi sequentially: sequentialPi.c
+2) Using atomic updates using pthreads without synchronization: threadPi.c
+3) True-sharing using mutex: mutexPi.c
+4) Atomic instructions compare_exchange_weak: atomicPi.cpp
+5) False-sharing with array: falseSharingPi.c
+6) Eliminate false and true sharing: trueAndFalseSharingPi.c
+7) Barriers: barriersPi.c
+
+To compile the code, uncompress the zip file.
+Inside that directory execute the command: make 
+This will create several executables for each program.
+To execute: run one of the following commands depending on the program you want to run.
+./sequentialPi
+./threadPi NUMBER_OF_THREADS
+./mutexPi NUMBER_OF_THREADS
+./atomicPi NUMBER_OF_THREADS
+./falseSharingPi NUMBER_OF_THREADS
+./trueAndFalseSharingPi NUMBER_OF_THREADS
+./barriersPi NUMBER_OF_THREADS
+
+For all programs except ./sequentialPi, be sure to include the desired number of threads as a command line argument.
+Max number of threads supported: 8
