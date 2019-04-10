@@ -79,7 +79,6 @@ void *compute_pi (void *threadIdPtr)
     mySum += step * f(x); //add contributions to local variable
   }
 
-  pthread_barrier_wait(&barr);
-
   sum[myId] = mySum; //write final contribution to global sum array
+  pthread_barrier_wait(&barr);
 }
