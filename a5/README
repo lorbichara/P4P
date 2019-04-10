@@ -26,3 +26,5 @@ To execute: run one of the following commands depending on the program you want 
 
 For all programs except ./sequentialPi, be sure to include the desired number of threads as a command line argument.
 Max number of threads supported: 8
+
+*when running make, a warning will appear but it can be ignored.
