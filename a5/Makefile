@@ -10,7 +10,7 @@ mutexPi: mutexPi.c
 	icc -o mutexPi mutexPi.c -O3 -lpthread
 
 atomicPi: atomicPi.cpp
-	icc -o atomicPi atomicPi.c -O3 -lpthread -std=c++11
+	icc -o atomicPi atomicPi.cpp -O3 -lpthread -std=c++11
 
 falseSharingPi: falseSharingPi.c
 	icc -o falseSharingPi falseSharingPi.c -O3 -lpthread
