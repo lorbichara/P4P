@@ -62,20 +62,17 @@ int main(int argc, char *argv[])
 	typedef std::pair<int, int> Edge;
 
 	std::vector<Edge> edges;
-	//array<Edge, 733846> edges;
 	for(int i = 0; i < n_edges; i++)
 	{
 		edges.push_back(Edge(src[i], dest[i]));
 	}
 
 	//Specify graph type and declare a graph object
-	//std::vector<int> parent;
 	typedef edge_list<std::vector<Edge>::iterator> Graph;
 	Graph g(edges.begin(), edges.end());
 
 	//Assign edge weights
 	std::vector<int> delay;
-	//array<int, 733846> delay;
 	for(int i = 0; i < n_edges; i++)
 	{
 		delay.push_back(weight[i]);
@@ -83,24 +80,26 @@ int main(int argc, char *argv[])
 
 	//Create vertex property storage
 	std::vector<int> parent;
-	//array<int, 264346> parent;
 	for(int i = 0; i < n_vertices; ++i)
 		parent.push_back(i);
-	//array<float, 264346 + 1> distance;
+
 	std::vector<int> distance;
 	for(int i = 0; i < n_vertices+1; i++)
 	{
 		distance.push_back(INF);
 	}
-	//distance.assign(INF);
 
 	//Specify A as source vertex
 	int sourceNode;
-	if(strncmp(argv[1], "rmat15.dimacs", 20) == 0 || strncmp(argv[1], "rmat23.dimacs", 20) == 0)
+	std::size_t found;
+
+	std::string name = argv[1];
+
+	if(name.find("rmat15.dimacs") != std::string::npos || name.find("rmat23.dimacs") != std::string::npos)
 		sourceNode = 1;
-	else if(strncmp(argv[1], "road-NY.dimacs", 20) == 0)
+	else if(name.find("road-NY.dimacs") != std::string::npos)
 		sourceNode = 140961;
-	else if(strncmp(argv[1], "road-FLA.dimacs", 20) == 0)
+	else if(name.find("road-FLA.dimacs") != std::string::npos)
 		sourceNode = 316607;
 	distance[sourceNode] = 0;
 
