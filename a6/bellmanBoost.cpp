@@ -18,7 +18,7 @@ void readGraph(std::string fileName)
 	int d, w;
 	std::string line, s, problem;
 	std::ifstream f;
-	f.open(fileName);
+	f.open(fileName.c_str());
 
 	if(!f)
 	{
@@ -65,7 +65,7 @@ int main()
 	//array<Edge, 733846> edges;
 	for(int i = 0; i < n_edges; i++)
 	{
-		edges[i] = Edge(src[i], dest[i]);
+		edges.push_back(Edge(src[i], dest[i]));
 	}
 
 	//Specify graph type and declare a graph object
@@ -78,19 +78,19 @@ int main()
 	//array<int, 733846> delay;
 	for(int i = 0; i < n_edges; i++)
 	{
-		delay[i] = weight[i];
+		delay.push_back(weight[i]);
 	}
 
 	//Create vertex property storage
 	std::vector<int> parent;
 	//array<int, 264346> parent;
 	for(int i = 0; i < n_vertices; ++i)
-		parent[i] = i;
+		parent.push_back(i);
 	//array<float, 264346 + 1> distance;
 	std::vector<int> distance;
 	for(int i = 0; i < n_vertices+1; i++)
 	{
-		distance[i] = INF;
+		distance.push_back(INF);
 	}
 	//distance.assign(INF);
 
