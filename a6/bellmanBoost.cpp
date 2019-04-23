@@ -47,7 +47,7 @@ void readGraph(std::string fileName)
 	f.close();
 }
 
-int main(int argc, char *argv[])
+int main()
 {
 	readGraph("road-NY.dimacs");
 
