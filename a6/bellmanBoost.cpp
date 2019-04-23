@@ -61,18 +61,18 @@ int main(int argc, char *argv[])
 	int n_edges = nArcs;
 	typedef std::pair<int, int> Edge;
 
-	array<Edge, 524289> edges;
+	array<Edge, 733846> edges;
 	for(int i = 0; i < n_edges; i++)
 	{
 		edges[i] = Edge(src[i], dest[i]);
 	}
 
 	//Specify graph type and declare a graph object
-	typedef edge_list<array<Edge, 524289>::iterator> Graph;
+	typedef edge_list<array<Edge, 733846>::iterator> Graph;
 	Graph g(edges.begin(), edges.end());
 
 	//Assign edge weights
-	array<int, 524289> delay;
+	array<int, 733846> delay;
 	std::cout << delay.max_size() << std::endl;
 	for(int i = 0; i < n_edges; i++)
 	{
@@ -80,10 +80,10 @@ int main(int argc, char *argv[])
 	}
 
 	//Create vertex property storage
-	array<int, 32769> parent;
+	array<int, 264346> parent;
 	for(int i = 0; i < n_vertices; ++i)
 		parent[i] = i;
-	array<float, 32769 + 1> distance;
+	array<float, 264346 + 1> distance;
 	distance.assign(INF);
 
 	//Specify A as source vertex
