@@ -49,7 +49,7 @@ void readGraph(std::string fileName)
 
 int main(int argc, char *argv[])
 {
-	readGraph(argv[1]);
+	readGraph("road-NY.dimacs");
 
 	uint64_t execTime;
 	struct timespec tick, tock;
@@ -88,11 +88,11 @@ int main(int argc, char *argv[])
 
 	//Specify A as source vertex
 	int sourceNode;
-	if(strncmp(argv[1], "rmat15.dimacs", 20) == 0 || strncmp(argv[1], "rmat23.dimacs", 20) == 0)
+	if(strncmp("road-NY.dimacs", "rmat15.dimacs", 20) == 0 || strncmp("road-NY.dimacs", "rmat23.dimacs", 20) == 0)
 		sourceNode = 1;
-	else if(strncmp(argv[1], "road-NY.dimacs", 20) == 0)
+	else if(strncmp("road-NY.dimacs", "road-NY.dimacs", 20) == 0)
 		sourceNode = 140961;
-	else if(strncmp(argv[1], "road-FLA.dimacs", 20) == 0)
+	else if(strncmp("road-NY.dimacs", "road-FLA.dimacs", 20) == 0)
 		sourceNode = 316607;
 	distance[sourceNode] = 0;
 
