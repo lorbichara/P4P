@@ -49,7 +49,7 @@ void readGraph(std::string fileName)
 
 int main()
 {
-	readGraph("road-NY.dimacs");
+	readGraph("rmat15.dimacs");
 
 	uint64_t execTime;
 	struct timespec tick, tock;
@@ -61,30 +61,38 @@ int main()
 	int n_edges = nArcs;
 	typedef std::pair<int, int> Edge;
 
-	array<Edge, 524288> edges;
+	std::vector<Edge> edges;
+	//array<Edge, 733846> edges;
 	for(int i = 0; i < n_edges; i++)
 	{
 		edges[i] = Edge(src[i], dest[i]);
 	}
 
 	//Specify graph type and declare a graph object
-	typedef edge_list<array<Edge, 524288>::iterator> Graph;
+	//std::vector<int> parent;
+	typedef edge_list<std::vector<Edge>::iterator> Graph;
 	Graph g(edges.begin(), edges.end());
 
 	//Assign edge weights
-	array<int, 524288> delay;
-	std::cout << delay.max_size() << std::endl;
+	std::vector<int> delay;
+	//array<int, 733846> delay;
 	for(int i = 0; i < n_edges; i++)
 	{
 		delay[i] = weight[i];
 	}
 
 	//Create vertex property storage
-	array<int, 32768> parent;
+	std::vector<int> parent;
+	//array<int, 264346> parent;
 	for(int i = 0; i < n_vertices; ++i)
 		parent[i] = i;
-	array<float, 32768 + 1> distance;
-	distance.assign(INF);
+	//array<float, 264346 + 1> distance;
+	std::vector<int> distance;
+	for(int i = 0; i < n_vertices+1; i++)
+	{
+		distance[i] = INF;
+	}
+	//distance.assign(INF);
 
 	//Specify A as source vertex
 	int sourceNode;
