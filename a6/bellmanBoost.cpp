@@ -61,18 +61,18 @@ int main(int argc, char *argv[])
 	int n_edges = nArcs;
 	typedef std::pair<int, int> Edge;
 
-	array<Edge, 733846> edges;
+	array<Edge, 524288> edges;
 	for(int i = 0; i < n_edges; i++)
 	{
 		edges[i] = Edge(src[i], dest[i]);
 	}
 
 	//Specify graph type and declare a graph object
-	typedef edge_list<array<Edge, 733846>::iterator> Graph;
+	typedef edge_list<array<Edge, 524288>::iterator> Graph;
 	Graph g(edges.begin(), edges.end());
 
 	//Assign edge weights
-	array<int, 733846> delay;
+	array<int, 524288> delay;
 	std::cout << delay.max_size() << std::endl;
 	for(int i = 0; i < n_edges; i++)
 	{
@@ -80,19 +80,19 @@ int main(int argc, char *argv[])
 	}
 
 	//Create vertex property storage
-	array<int, 264346> parent;
+	array<int, 32768> parent;
 	for(int i = 0; i < n_vertices; ++i)
 		parent[i] = i;
-	array<float, 264346 + 1> distance;
+	array<float, 32768 + 1> distance;
 	distance.assign(INF);
 
 	//Specify A as source vertex
 	int sourceNode;
-	if(strncmp("road-NY.dimacs", "rmat15.dimacs", 20) == 0 || strncmp("road-NY.dimacs", "rmat23.dimacs", 20) == 0)
+	if(strncmp("rmat15.dimacs", "rmat15.dimacs", 20) == 0 || strncmp("rmat15.dimacs", "rmat23.dimacs", 20) == 0)
 		sourceNode = 1;
-	else if(strncmp("road-NY.dimacs", "road-NY.dimacs", 20) == 0)
+	else if(strncmp("rmat15.dimacs", "road-NY.dimacs", 20) == 0)
 		sourceNode = 140961;
-	else if(strncmp("road-NY.dimacs", "road-FLA.dimacs", 20) == 0)
+	else if(strncmp("rmat15.dimacs", "road-FLA.dimacs", 20) == 0)
 		sourceNode = 316607;
 	distance[sourceNode] = 0;
 
