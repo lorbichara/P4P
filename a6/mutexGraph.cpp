@@ -133,5 +133,7 @@ void *bellman_ford(void *threadIdPtr)
 			if((result[u] != INFINITY) && (result[u] + wt < result[v]))
 				result[v] = result[u] + wt;
 		}
+		cout << i << " ";
 	}
+	cout << endl;
 }
