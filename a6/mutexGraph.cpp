@@ -6,6 +6,7 @@
 #include <stdint.h>  /* for uint64  */
 #include <time.h>    /* for clock_gettime */
 #include <pthread.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ void readGraph(string fileName)
 	int d, w;
 	string line, s, problem;
 	ifstream f;
-	f.open(fileName);
+	f.open(fileName.c_str());
 
 	if(!f)
 	{
@@ -78,8 +79,8 @@ int main(int argc, char *argv[])
 		sourceNode = 140961;
 	else if(graphName == "road-FLA.dimacs")
 		sourceNode = 316607;
-	
-	fill(result.begin(),result.begin()+nNodes+1,INFINITY);
+
+	result.assign(nNodes+1, INFINITY);
 	result[sourceNode] = 0;
 
 	//execute bellman_ford
