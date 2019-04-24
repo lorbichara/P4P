@@ -1,4 +1,5 @@
-//Thread Bellman Ford
+//Parallel Bellman Ford
+//Mutex on the graph
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -11,7 +12,7 @@
 using namespace std;
 
 #define INFINITY 1073741823
-#define MAX_THREADS 8
+#define MAX_THREADS 16
 pthread_t handles[MAX_THREADS];
 int shortNames[MAX_THREADS];
 
@@ -23,6 +24,7 @@ vector<int> weight;
 vector<int> result;
 int nNodes, nArcs;
 int NUM_THREADS;
+pthread_mutex_t graph_lock;
 
 void readGraph(string fileName)
 {
@@ -66,6 +68,7 @@ int main(int argc, char *argv[])
 
 	pthread_attr_t attr;
 	pthread_attr_init (&attr);
+	pthread_mutex_init(&graph_lock, NULL);
 
 	//read graph
 	string graphName = argv[1];
@@ -110,7 +113,7 @@ int main(int argc, char *argv[])
 
 	//print result to output file
 	ofstream output;
-	output.open("output.txt");
+	output.open("outputmutexGraph.txt");
 	for(int i = 1; i <= nNodes; i++)
 	{
 		output << i << " " << result[i] << endl;
@@ -126,12 +129,15 @@ void *bellman_ford(void *threadIdPtr)
 	{
 		for(int j = 0; j < nArcs; j++)
 		{
+			pthread_mutex_lock(&graph_lock);
 			int u = source[j];
 			int v = dest[j];
 			int wt = weight[j];
 
 			if((result[u] != INFINITY) && (result[u] + wt < result[v]))
 				result[v] = result[u] + wt;
+
+			pthread_mutex_unlock(&graph_lock);
 		}
 		cout << i << " ";
 	}
